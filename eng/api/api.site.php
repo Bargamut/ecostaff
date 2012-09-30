@@ -1,6 +1,5 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
  * User: Bargamut
  * Date: 04.08.12
  * Time: 17:25
@@ -17,9 +16,11 @@ class Site{
      */
     function var2send_pm($var, $reg, $vname) {
         if (!empty($var)) {
-            preg_match($reg, $var) ?
-                $var = htmlspecialchars($var)
-            :   $this->err['send'][] = $vname;
+            if (!preg_match($reg, $var)) {
+                $this->err['send'][] = $vname;
+            }
+        } else {
+            $this->err['send'][] = $vname . ': пустое';
         }
         return $var;
     }
@@ -30,9 +31,9 @@ class Site{
      * @return string
      */
     function var2send($var){
-        (!empty($var)) ?
-            $var = htmlspecialchars($var)
-        :   null;
+        if (empty($var)) {
+            $this->err['send'][] = $var . ': пустое';
+        }
         return $var;
     }
 }

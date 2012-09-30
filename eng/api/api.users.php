@@ -1,6 +1,5 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
  * User: Bargamut
  * Date: 15.07.12
  * Time: 22:46
@@ -112,7 +111,7 @@ class Users {
     }
 
     function userTab($uname) {
-        $res = file_get_contents(SITE_ROOT.'/eng/tpl/userTab.html');
+        $res = file_get_contents(SITE_ROOT.'/tpl/userTab.html');
         $res = str_replace('{uname}',           $uname, $res);
         $res = str_replace('{AUTH_PROFILE}',    AUTH_PROFILE, $res);
         $res = str_replace('{AUTH_EXIT}',       AUTH_EXIT, $res);
@@ -120,7 +119,7 @@ class Users {
     }
 
     function mAuthForm() {
-        $res = file_get_contents(SITE_ROOT.'/eng/tpl/mAuthForm.html');
+        $res = file_get_contents(SITE_ROOT.'/tpl/mAuthForm.html');
         $res = str_replace('{AUTH_EMAIL}',          AUTH_EMAIL, $res);
         $res = str_replace('{AUTH_PASSWORD}',       AUTH_PASSWORD, $res);
         $res = str_replace('{AUTH_SUBMIT}',         AUTH_SUBMIT, $res);
@@ -137,7 +136,7 @@ class Users {
 
     /**
      * Функция данных профиля
-     * @param $mail
+     * @param string $mail E-Mail пользователя
      * @return array
      */
     function profile($mail) { return $this->getProfileInfo($mail); }

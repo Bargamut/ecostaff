@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Сен 28 2012 г., 02:33
+-- Время создания: Сен 30 2012 г., 13:40
 -- Версия сервера: 5.5.27-log
 -- Версия PHP: 5.4.6
 
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `clients` (
   `email` char(50) NOT NULL COMMENT 'E-Mail клиента',
   `skype` char(15) NOT NULL COMMENT 'Skype клиента',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Таблица клиентов' AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='Таблица клиентов' AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -71,18 +71,19 @@ CREATE TABLE IF NOT EXISTS `languages` (
 DROP TABLE IF EXISTS `projects`;
 CREATE TABLE IF NOT EXISTS `projects` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID проекта',
+  `clientid` int(11) NOT NULL COMMENT 'ID клиента',
   `filial` int(11) NOT NULL COMMENT 'ID филиала проекта',
-  `number` tinyint(4) NOT NULL COMMENT 'Номер проекта',
+  `number` int(4) NOT NULL COMMENT 'Номер проекта',
   `hours` tinyint(3) NOT NULL COMMENT 'Количество часов в пакете',
   `hours2` tinyint(3) NOT NULL DEFAULT '0' COMMENT 'Количество часов отчитанных',
   `form` int(11) NOT NULL COMMENT 'ID формы обучения',
   `programm` varchar(1000) NOT NULL COMMENT 'Программа обучения',
   `payvariant` int(11) NOT NULL COMMENT 'ID варианта оплаты',
   `teacher` int(11) NOT NULL COMMENT 'ID преподавателя',
-  `wagerate` smallint(5) NOT NULL COMMENT 'Ставка за академический час',
+  `wagerate` int(5) NOT NULL COMMENT 'Ставка за академический час',
   `cost` mediumint(10) NOT NULL COMMENT 'Сумма договора',
   `manager` int(11) NOT NULL COMMENT 'ID менеджера',
-  `data` date NOT NULL DEFAULT '0000-00-00' COMMENT 'Дата заключения договора',
+  `date` date NOT NULL DEFAULT '0000-00-00' COMMENT 'Дата заключения договора',
   `etap1` int(10) NOT NULL COMMENT 'Сумма 1-го этапа оплаты',
   `etap2` int(10) NOT NULL COMMENT 'Сумма 2-го этапа оплаты',
   `etap3` int(10) NOT NULL COMMENT 'Сумма 3-го этапа оплаты',
@@ -90,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `complete` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Курс закрыт',
   `return` int(10) NOT NULL COMMENT 'Сумма возврата',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Таблица проектов' AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='Таблица проектов' AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -121,6 +122,19 @@ CREATE TABLE IF NOT EXISTS `projects_payvariants` (
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `stations`
+--
+
+DROP TABLE IF EXISTS `stations`;
+CREATE TABLE IF NOT EXISTS `stations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID станции метро',
+  `name` char(50) NOT NULL COMMENT 'Название станции метро',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='Таблица станций метро' AUTO_INCREMENT=18 ;
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `teachers`
 --
 
@@ -134,7 +148,7 @@ CREATE TABLE IF NOT EXISTS `teachers` (
   `grade` int(11) NOT NULL COMMENT 'ID уровня преподавателя',
   `metro` int(11) NOT NULL COMMENT 'ID станции метро',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Таблица преподавателей' AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='Таблица преподавателей' AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -163,7 +177,7 @@ CREATE TABLE IF NOT EXISTS `users_bio` (
   `fathername` varchar(255) NOT NULL COMMENT 'Отчество',
   `birthday` date NOT NULL DEFAULT '0000-00-00' COMMENT 'День рождения',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Био членов Клуба' AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='Био членов Клуба' AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -202,7 +216,7 @@ CREATE TABLE IF NOT EXISTS `users_site` (
   `block` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Флаг блокировки пользователя',
   `block_reason` varchar(255) NOT NULL COMMENT 'Причина блокировки',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Таблица логин-пароль пользователей' AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='Таблица логин-пароль пользователей' AUTO_INCREMENT=3 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

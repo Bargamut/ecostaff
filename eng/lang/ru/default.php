@@ -6,11 +6,11 @@
  * Time: 3:28
  */
 
-define('SITE_TITLE' ,   'КИР "Яро Пламя"');
+define('SITE_TITLE' ,   'EcoStaff');
 
 define('DEBUG'      ,   'Сайт на реконструкции, скоро вернёмся!');
 
-define('CREDITS'    ,   'Клуб Исторической Реконструкции "Яро Пламя"<br />&copy; 2008 - ' . date('Y'));
+define('CREDITS'    ,   'EcoStaff<br />&copy; 2008 - ' . date('Y'));
 define('DEVELOPERS' ,   'Разработка Bargamut.RU');
 
 $ERRORS = array(
