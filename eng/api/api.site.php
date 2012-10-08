@@ -36,4 +36,12 @@ class Site{
         }
         return $var;
     }
+
+    function dateFormat() {
+
+    }
+
+    function fioFormat($fio = '') {
+        return preg_replace('/^([A-Za-zА-Яа-я]*\s[A-ZА-Я])[a-zа-я]*\s([A-ZА-Я]).*$/us', '$1.$2.', $fio);
+    }
 }

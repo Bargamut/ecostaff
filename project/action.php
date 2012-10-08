@@ -11,7 +11,6 @@ print_r($_POST);
 echo '</pre>';
 
 if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btnClose'])) {
-    echo 'TEST';
     if (!empty($_POST['btnClose'])) {
         // Регулярные выражения для проверки данных
         $number_reg = '/^([0-9]{4})$/isu';

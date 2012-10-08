@@ -27,31 +27,7 @@ include('../top.php');?>
         </div>
     </div>
     <div class="content">
-        <form name="projEdit" method="post" action="action.php" enctype="multipart/form-data">
-            <input name="type" type="hidden" value="<?=$_GET['t']?>">
-            <?php
-            $staff_tpl  = file_get_contents(SITE_ROOT.'/tpl/staffCreate.html');
-            $languages  = $DB->db_query('SELECT * FROM languages', ['']);
-            $stations   = $DB->db_query('SELECT * FROM stations', ['']);
-            $grades     = $DB->db_query('SELECT * FROM teachers_grades', ['']);
-            $r_lang     = '';
-            $r_stat     = '';
-            $r_grade    = '';
-            foreach ($languages as $k => $v) {
-                $r_lang .= '<li><label>'.$v['name'].'</label> <input type="checkbox" name="languages[]" value="'.$v['id'].'"></li>';
-            }
-            foreach ($stations as $k => $v) {
-                $r_stat .= '<option value="'.$v['id'].'"> '.$v['name'];
-            }
-            foreach ($grades as $k => $v) {
-                $r_grade .= '<option value="'.$v['id'].'"> '.$v['name'];
-            }
-            $staff_tpl = str_replace('{languages}', $r_lang,    $staff_tpl);
-            $staff_tpl = str_replace('{metro}',     $r_stat,    $staff_tpl);
-            $staff_tpl = str_replace('{grade}',    $r_grade,   $staff_tpl);
-            echo $staff_tpl;
-            ?>
-        </form>
+
     </div>
     <div class="push"></div>
 </div>

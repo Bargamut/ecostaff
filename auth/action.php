@@ -7,5 +7,5 @@
  */
 include_once('../top.php');
 
-$_SESSION['USER'] = $USER->auth($_POST['aSubm'], $_POST['aEmail'], $_POST['aPass']);
+$_SESSION['USER'] = $USER->auth($_POST['authSubm'], $_POST['email'], $_POST['pass']);
 ?>

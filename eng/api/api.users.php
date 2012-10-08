@@ -19,23 +19,21 @@ class Users {
      */
     function registration($subm, $post) {
         if (!empty($subm) && $this->registrationCorrect($post)) {
-            $mail = $post['rEmail'];
+            $mail = $post['email'];
+            $login = $post['login'];
             $salt = $this->generateRandString(250);
             $date_reg = date('Y-m-d H:i:s');
-            $fio = array(
-                'firstname'     => $post['rName'],
-                'lastname'      => $post['rLName'],
-                'fathername'    => $post['rFName']
-            );
-            $password = hash('sha512', hash('sha512', $post['rPass']).$salt);
+            $fio = $post['fio'];
+            $password = hash('sha512', hash('sha512', $post['pass']).$salt);
             $token = hash('sha512', uniqid(rand(), 1));
-            $filial_id = $post['rFilial'];
+            $filial_id = $post['filial'];
+            $lvl = $post['lvl'];
 
-            $forUserSite = array($mail, $password, $salt, $date_reg, $date_reg, $token, $filial_id);
-            $forUserBio = array($fio['firstname'], $fio['lastname'], $fio['fathername']);
+            $forUserSite = array($mail, $login, $password, $salt, $date_reg, $date_reg, $token, $filial_id, $lvl);
+            $forUserBio = array($fio);
 
-            $this->DB->db_query('INSERT INTO users_site (`email`, `password`, `salt`, `date_reg`, `date_lastvisit`, `uid`, `filial`) VALUES (%s, %s, %s, %s, %s, %s, %d)', $forUserSite);
-            $this->DB->db_query('INSERT INTO users_bio (`firstname`, `lastname`, `fathername`) VALUES (%s, %s, %s)', $forUserBio);
+            $this->DB->db_query('INSERT INTO users_site (`email`, `login`, `password`, `salt`, `date_reg`, `date_lastvisit`, `uid`, `filial`, `level`) VALUES (%s, %s, %s, %s, %s, %s, %s, %d, %s)', $forUserSite);
+            $this->DB->db_query('INSERT INTO users_bio (`fio`) VALUES (%s)', $forUserBio);
 //            if (mysql_query($db_query) or die(mysql_error())) {
 //                return $this->auth($subm, $post['rEmail'], $post['rPass']);
 //            }
@@ -51,7 +49,7 @@ class Users {
         // Если был сабмит авторизации и все данные введены верно
         if (!empty($subm) && $this->authCorrect($mail, $pass)) {
             $user = $this->getUserInfo($mail);
-            $user['UNAME'] = $user['lastname'].' '.$user['firstname'].' '.$user['fathername'];
+            $user['UNAME'] = $user['fio'];
 
             // Устанавливаем coockie с данными пользователя
             setcookie ("UID",   $user['uid'],   time() + 50000, '/');
@@ -218,24 +216,21 @@ class Users {
      */
     private function registrationCorrect() {
         $result = '';
+        $reg_email = '/^([a-z0-9])(\w|[.]|-|_)+([a-z0-9])@([a-z0-9])([a-z0-9.-]*)([a-z0-9])([.]{1})([a-z]{2,4})$/is';
 
-        if ($_POST['rEmail'] == "") $result = 'email|';                       // не пусто ли поле логина
-        if ($_POST['rFilial'] == "") $result = 'filial|';                       // не пусто ли поле логина
-        if ($_POST['rPass'] == "") $result = 'pass|';                        // не пусто ли поле пароля
-        if ($_POST['rPass2'] == "") $result = 'pass2|';                       // не пусто ли поле подтверждения пароля
-        if ($_POST['rLic'] != "ok") $result = 'lic|';                       // приняты ли правила
-        if (!preg_match('/^([a-z0-9])(\w|[.]|-|_)+([a-z0-9])@([a-z0-9])([a-z0-9.-]*)([a-z0-9])([.]{1})([a-z]{2,4})$/is', $_POST['rEmail'])) $result = 'preg_email|'; // соответствует ли поле e-mail регулярному выражению
-//    if (!preg_match('/^([а-яА-a-zA-Z0-9])(\w|-|_)+([a-z0-9])$/is'   , $_POST['rLName'])) return false;  // соответствует ли Фамилия регулярному выражению
-//    if (!preg_match('/^([а-яА-a-zA-Z0-9])(\w|-|_)+([a-z0-9])$/is'   , $_POST['rName'])) return false;   // соответствует ли Имя регулярному выражению
-//    if (!preg_match('/^([а-яА-Яa-zA-Z0-9])(\w|-|_)+([a-z0-9])$/is'  , $_POST['rFName'])) return false;  // соответствует ли Отчество регулярному выражению
-        if (strlen($_POST['rPass']) < 5 && empty($_POST['rPass'])) $result = 'pass < 5|';               // не меньше ли 5 символов длина пароля
-        if (hash('sha512', $_POST['rPass']) != hash('sha512', $_POST['rPass2'])) $result = 'not_confirm_pass|';    // равен ли пароль его подтверждению
+        if ($_POST['login'] == "") $result = 'login|';      // не пусто ли поле логина
+        if ($_POST['email'] == "") $result = 'email|';      // не пусто ли поле почты
+        if ($_POST['filial'] == "") $result = 'filial|';    // не пусто ли поле филиала
+        if ($_POST['pass'] == "") $result = 'pass|';        // не пусто ли поле пароля
+        if ($_POST['pass2'] == "") $result = 'pass2|';      // не пусто ли поле подтверждения пароля
+        if (!preg_match($reg_email, $_POST['email'])) $result = 'preg_email|'; // соответствует ли поле e-mail регулярному выражению
+        if (strlen($_POST['pass']) < 5 && empty($_POST['pass'])) $result = 'pass < 5|'; // не меньше ли 5 символов длина пароля
+        if (hash('sha512', $_POST['pass']) != hash('sha512', $_POST['pass2'])) $result = 'not_confirm_pass|'; // равен ли пароль его подтверждению
 
-        $rez = $this->DB->db_query('SELECT * FROM users_site WHERE `email`=%s LIMIT 1', [$_POST['rMail']]);
-        if (count($rez) != 0) $result = 'already_exist|';                   // проверка на существование в БД такого же логина
+        $rez = $this->DB->db_query('SELECT * FROM users_site WHERE `login`=%s LIMIT 1', [$_POST['login']]);
+        if (count($rez) != 0) $result = 'already_exist|'; // проверка на существование в БД такого же логина
 
-        echo $result;
-        return ($result == '');                                                    // если выполнение функции дошло до этого места, возвращаем true
+        return ($result == ''); // если выполнение функции дошло до этого места, возвращаем true
     }
 
     /**
@@ -243,7 +238,7 @@ class Users {
      */
     private function getUserInfo($mail) {
         $us = $this->DB->db_query('SELECT `id`, `email`, `uid`, `date_reg`, `date_lastvisit`, `level`, `filial`, `block`, `block_reason` FROM users_site WHERE `email`=%s LIMIT 1', [$mail]);
-        $ub = $this->DB->db_query('SELECT `firstname`, `lastname`, `fathername` FROM users_bio WHERE `id` = %d LIMIT 1', [$us['id']]);
+        $ub = $this->DB->db_query('SELECT `fio` FROM users_bio WHERE `id` = %d LIMIT 1', [$us['id']]);
         $ul = $this->DB->db_query('SELECT `rights`, `lvlname` FROM users_lvl WHERE `lvl` = %s LIMIT 1', [$us['level']]);
 
         $user = array_merge($us, $ub, $ul);
@@ -255,7 +250,7 @@ class Users {
      */
     private function getProfileInfo($mail) {
         $us = $this->DB->db_query('SELECT `id`, `email`, `uid`, `level`, `filial`, `block`, `block_reason` FROM users_site WHERE `email`=%s AND `level` != "G" LIMIT 1', [$mail]);
-        $ub = $this->DB->db_query('SELECT `firstname`, `lastname`, `fathername`, `birthday` FROM users_bio WHERE `id`=%d LIMIT 1', [$us['id']]);
+        $ub = $this->DB->db_query('SELECT `fio`, `birthday` FROM users_bio WHERE `id`=%d LIMIT 1', [$us['id']]);
         $ul = $this->DB->db_query('SELECT `lvlname` FROM users_lvl WHERE `lvl`=%s LIMIT 1', [$us['level']]);
 
         $profile = array_merge($us, $ub, $ul);
@@ -268,7 +263,7 @@ class Users {
      */
     private function getProfilesInfo() {
         $us = $this->DB->db_query('SELECT `id`, `block` FROM users_site ORDER BY `id`', ['']);
-        $ub = $this->DB->db_query('SELECT `firstname`, `lastname`, `fathername` FROM users_bio ORDER BY `id`', ['']);
+        $ub = $this->DB->db_query('SELECT `fio` FROM users_bio ORDER BY `id`', ['']);
 
         $profiles = array();
         $profiles[$us['id']] = array_merge($us, $ub);

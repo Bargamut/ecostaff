@@ -16,6 +16,7 @@ include('../top.php');?>
     <title><?=SITE_TITLE?></title>
     <script type="text/javascript" src="../js/jquery/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="../js/auth.js"></script>
+    <script type="text/javascript" src="../js/project.js"></script>
 </head>
 
 <body>
@@ -28,6 +29,7 @@ include('../top.php');?>
     </div>
     <div class="content">
         <form name="projEdit" method="post" action="action.php" enctype="multipart/form-data">
+            <input class="status" name="status" type="hidden" value="<?=isset($_GET['p']) && is_numeric($_GET['p']) ? 'edit' : 'new';?>" />
             <?php
             /**
              * Функция формирования массива значений в <option>
@@ -35,38 +37,41 @@ include('../top.php');?>
              * @param $key - значение для селекта
              * @return string - возвращает <opt...><opt...><opt...>
              */
-            function tplSelect($needle, $key) {
+            function tplSelect($needle, $key, $ind) {
                 $r = '';
                 foreach ($needle as $k => $v) {
                         $s = $v['id'] == $key ? 'selected' : '';
-                        $r .= '<option '.$s.' value="'.$v['id'].'">'.$v['fio'].'</option>';
+                        $r .= '<option '.$s.' value="'.$v['id'].'">'.$v[$ind].'</option>';
                 }
                 return $r;
             }
 
             $project        = $DB->db_query('SELECT * FROM projects WHERE `number`=%d LIMIT 1', [$_GET['p']]);
-            $filial         = $DB->db_query('SELECT `name` FROM filial WHERE `id`=%d',          [$project['filial']]);
             $client         = $DB->db_query('SELECT * FROM clients WHERE `id`=%d LIMIT 1',      [$project['clientid']]);
-            $p_form         = $DB->db_query('SELECT `name` FROM projects_form WHERE `id`=%d',           [$project['form']]);
-            $p_payvariants  = $DB->db_query('SELECT `name` FROM projects_payvariants WHERE `id`=%d',    [$project['payvariant']]);
-            $teachers       = $DB->db_query('SELECT `id`, `fio` FROM teachers',                                   ['']);
-            $manager        = $DB->db_query('SELECT `lastname`, `firstname`, `fathername` FROM users_bio WHERE `id`=%d', [$project['manager']]);
+            $p_payvariants  = $DB->db_query('SELECT * FROM projects_payvariants',   [$project['payvariant']]);
+            $managers       = $DB->db_query('SELECT `id`, `fio` FROM users_bio',    ['']);
+            $teachers       = $DB->db_query('SELECT `id`, `fio` FROM teachers',     ['']);
+            $filials        = $DB->db_query('SELECT * FROM filial',         ['']);
+            $p_forms        = $DB->db_query('SELECT * FROM projects_form',  ['']);
 
-            $teachers = tplSelect($teachers, $project['teacher']);
-            $manager['fio'] = $manager['lastname'].' '.$manager['firstname'].' '.$manager['fathername'];
+            $teachers       = tplSelect($teachers,      $project['teacher'],    'fio');
+            $filials        = tplSelect($filials,       $project['filial'],     'name');
+            $p_forms        = tplSelect($p_forms,       $project['form'],       'name');
+            $managers       = tplSelect($managers,      $project['manager'],    'fio');
+            $p_payvariants  = tplSelect($p_payvariants, $project['payvariant'], 'name');
 
-            $edit_tpl = file_get_contents(SITE_ROOT.'/tpl/projEdit.html');
+            $edit_tpl = file_get_contents(SITE_ROOT.'/tpl/projForm.html');
             $edit_tpl = str_replace('{number}',     $project['number'], $edit_tpl);
             $edit_tpl = str_replace('{date}',       $project['date'],   $edit_tpl);
             $edit_tpl = str_replace('{cost}',       $project['cost'],   $edit_tpl);
-            $edit_tpl = str_replace('{filial}',     $filial['name'],    $edit_tpl);
-            $edit_tpl = str_replace('{manager}',    $manager['fio'],    $edit_tpl);
+            $edit_tpl = str_replace('{filial}',     $filials,           $edit_tpl);
+            $edit_tpl = str_replace('{manager}',    $managers,          $edit_tpl);
             $edit_tpl = str_replace('{teacher}',    $teachers,          $edit_tpl);
             $edit_tpl = str_replace('{fio}',        $client['fio'],     $edit_tpl);
             $edit_tpl = str_replace('{phone}',      $client['phone'],   $edit_tpl);
             $edit_tpl = str_replace('{email}',      $client['email'],   $edit_tpl);
             $edit_tpl = str_replace('{skype}',      $client['skype'],   $edit_tpl);
-            $edit_tpl = str_replace('{form}',       $p_form['name'],    $edit_tpl);
+            $edit_tpl = str_replace('{form}',       $p_forms,           $edit_tpl);
             $edit_tpl = str_replace('{programm}',   $project['programm'],   $edit_tpl);
             $edit_tpl = str_replace('{hours}',      $project['hours'],  $edit_tpl);
             $edit_tpl = str_replace('{hours2}',     $project['hours2'], $edit_tpl);
@@ -75,7 +80,7 @@ include('../top.php');?>
             $edit_tpl = str_replace('{etap1}',      $project['etap1'],  $edit_tpl);
             $edit_tpl = str_replace('{etap2}',      $project['etap2'],  $edit_tpl);
             $edit_tpl = str_replace('{etap3}',      $project['etap3'],  $edit_tpl);
-            $edit_tpl = str_replace('{payvariant}', $p_payvariants['name'], $edit_tpl);
+            $edit_tpl = str_replace('{payvariant}', $p_payvariants,     $edit_tpl);
             $edit_tpl = str_replace('{return}',     $project['return'], $edit_tpl);
             echo $edit_tpl;
             ?>

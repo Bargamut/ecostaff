@@ -1,5 +1,4 @@
 <?php
-// TODO: сделать фильтрацию значений против SQL Injection
 class Database {
     function db_connect($server, $username, $password) {
         $db_index = mysql_connect($server, $username, $password) or die('Ошибка подключения к базе данных!');

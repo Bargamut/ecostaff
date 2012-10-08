@@ -3,8 +3,5 @@
  * Date: 29.06.12
  * Time: 5:08
  */
-.leftmenu { width: 200px; float: left; }
-
-.projects table tr td { border: 1px #eee dotted; }
-.projects table tr.caption { text-align: center; font-size: 18px; font-weight: bold; background-color: #ddd; }
-.projects table tr td.date { white-space: nowrap; }
+ul { list-style: none; }
+ul li { border: 1px #EEE solid; padding: 5px 10px; display: inline; cursor: pointer; }

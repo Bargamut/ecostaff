@@ -19,8 +19,10 @@ include_once('lang/ru/auth.php');           // Языковой файл для 
 include_once('api/api.site.php');           // API Общий
 include_once('api/api.database.php');       // API Базы Данных
 include_once('api/api.users.php');          // API Пользователей
+include_once('api/api.economic.php');       // API Экономических
 
 $DB     = new Database();
 $SITE   = new Site();
 $USER   = new Users($DB);
+$ECON   = new Economic();
 ?>

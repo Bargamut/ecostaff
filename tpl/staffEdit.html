@@ -1,14 +1,22 @@
 <input name="id" type="hidden" value="{id}">
 <ul>
-    <li><label>ФИО</label><input name="fio" type="text" value="{fio}"></li>
-    <li><label>Телефон</label><input name="phone" type="text" value="{phone}"></li>
-    <li><label>E-Mail</label><input name="email" type="text" value="{email}"></li>
-    <li><label>Метро</label><select name="metro">{metro}</select></li>
-    <li><label>Ставка в руб за ак.ч.</label><input name="wagerate" type="text" value=""></li>
-    <li><label>Уровень</label><select name="grade">{grade}</select></li>
-    <li class="subhead">Языки</li>
+    <li><label>E-Mail</label><input id="email" name="email" type="text" value="{email}"></li>
+    <li><label>ФИО</label><input id="fio" name="fio" type="text" value="{fio}"></li>
+
+    <li><label>Должность: </label><select id="lvl" name="lvl">{lvlname}</select></li>
+
+    <li><label>Логин: </label><input id="login" name="login" type="text" value="{login}" /></li>
+    <li><label>Филиал: </label><select id="filial" name="filial">{filial}</select></li>
+    <li><label>Пароль: </label><input id="pass" name="pass" type="password" value="" /></li>
+    <li><label>Подтверждение: </label><input id="pass2" name="pass2" type="password" value="" /></li>
+
+    <li><label>Телефон</label><input id="phone" name="phone" type="text" value="{phone}"></li>
+    <li><label>Метро</label><select id="metro" name="metro">{metro}</select></li>
+    <li><label>Уровень</label><select id="grade" name="grade">{grade}</select></li>
+    <li class="subhead langs">Языки</li>
     {languages}
 
+    <li class="submit"><input name="btnSubm" class="btn submBut" type="submit" value="Создать"></li>
     <li class="submit"><input name="btnEdit" class="btn submEdit" type="submit" value="Обновить"></li>
     <!--<li class="submit"><input name="btnClose" class="btn submClose" type="submit" value="Удалить"></li>-->
 </ul>

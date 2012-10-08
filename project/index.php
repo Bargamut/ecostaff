@@ -27,10 +27,65 @@ include('../top.php');?>
         </div>
     </div>
     <div class="content">
-        <form name="projEdit" method="post" action="action.php" enctype="multipart/form-data">
-            <input name="type" type="hidden" value="<?=$_GET['t']?>">
-            <?=file_get_contents(SITE_ROOT.'/tpl/projCreate.html');?>
-        </form>
+        <?php
+        $projects       = $DB->db_query('SELECT * FROM projects ORDER BY `id` DESC LIMIT 50', ['']);
+        $filials        = $DB->db_query('SELECT * FROM filial',     ['']);
+        $clients        = $DB->db_query('SELECT * FROM clients',    ['']);
+        $p_forms        = $DB->db_query('SELECT * FROM projects_form',          ['']);
+        $p_payvariants  = $DB->db_query('SELECT * FROM projects_payvariants',   ['']);
+        $teachers       = $DB->db_query('SELECT `id`, `fio` FROM teachers',     ['']);
+        $managers       = $DB->db_query('SELECT `id`, `fio` FROM users_bio',    ['']);
+
+
+        $p_result = '<table border="0" cellspadding="0" cellspacing="0">';
+        foreach ($projects as $k => $v) {
+            if ($k == 0) {
+                $p_result .= '<tr class="caption">'.
+                    '<td></td>'.
+                    '<td class="date">Дата</td>'.
+                    '<td>№</td>'.
+                    '<td>Филиал</td>'.
+                    '<td>Менеджер</td>'.
+                    '<td>Преподаватель</td>'.
+                    '<td>Клиент</td>'.
+                    '<td>Сумма</td>'.
+                    '<td>Остаток</td>'.
+                    '<td>Часов в пакете</td>'.
+                    '<td>Отчитано</td>'.
+                    '<td>Ставка за ак.час</td>'.
+                    '<td>Статус</td>'.
+                    '<td>Возврат</td>'.
+                    '</tr>';
+            }
+            $v['complete'] = $v['complete'] ? 'Завершено' : 'В процессе';
+
+            $man_fio    = $SITE->fioFormat($managers[$v['manager'] - 1]['fio']);
+            $teach_fio  = $SITE->fioFormat($teachers[$v['teacher'] - 1]['fio']);
+            $client_fio = $SITE->fioFormat($clients[$v['clientid'] - 1]['fio']);
+            $debt       = $ECON->debt($v);
+
+            $p_result .= '<tr>'.
+                '<td><a href="/project/edit.php?p='.$v['number'].'">[ред]</a></td>'.
+                '<td class="date">'.date('d.m.y', strtotime($v['date'])) .'</td>'.
+                '<td>'.$v['number'].'</td>'.
+                '<td>'.$filials[$v['filial'] - 1]['name'].'</td>'.
+                '<td>'.$man_fio.'</td>'.
+                '<td>'.$teach_fio.'</td>'.
+                '<td>'.$client_fio.'</td>'.
+                '<td>'.$v['cost'].'</td>'.
+                '<td>'.$debt.'</td>'.
+                '<td>'.$v['hours'].'</td>'.
+                '<td>'.$v['hours2'].'</td>'.
+                '<td>'.$v['wagerate'].'</td>'.
+                '<td>'.$v['complete'].'</td>'.
+                '<td>'.$v['return'].'</td>'.
+                '</tr>';
+        }
+        $p_result .= '</table>';
+        $main_tpl = file_get_contents(SITE_ROOT.'/tpl/projPage.html');
+        $main_tpl = str_replace('{projects}', $p_result, $main_tpl);
+        echo $main_tpl;
+        ?>
     </div>
     <div class="push"></div>
 </div>
