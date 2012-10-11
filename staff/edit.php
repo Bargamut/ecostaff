@@ -24,9 +24,9 @@ include('../top.php');?>
 <div class="main ">
     <div class="header">
         <?=SITE_LOGO?>
-        <div id="login_auth">
-            <?=$userinfo['logined'] ? $USER->userTab($userinfo['UNAME']) : $USER->mAuthForm();?>
-        </div>
+    </div>
+    <div class="usertab">
+        <?php if ($userinfo['logined']) { echo $USER->userTab($userinfo['UNAME']); }?>
     </div>
     <div class="content">
         <form name="projEdit" method="post" action="action.php" enctype="multipart/form-data">
@@ -47,7 +47,7 @@ include('../top.php');?>
                 return $r;
             }
 
-            $edit_tpl = file_get_contents(SITE_ROOT.'/tpl/staffEdit.html');
+            $edit_tpl = file_get_contents(SITE_ROOT.'/tpl/forms/staffForm.html');
 
             if ($_GET['m'] == 't') {
                 $teacher    = $DB->db_query('SELECT * FROM teachers WHERE `id`=%d LIMIT 1',     [$_GET['s']]);

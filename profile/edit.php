@@ -23,14 +23,9 @@ include('../top.php');?>
 <div class="main ">
     <div class="header">
         <?=SITE_LOGO?>
-        <div id="login_auth">
-            <?php
-            $userinfo['logined'] ?
-                $htmlMAuth = $USER->userTab($userinfo['UNAME'])
-            :   $htmlMAuth = $USER->mAuthForm();
-            echo $htmlMAuth;
-            ?>
-        </div>
+    </div>
+    <div class="usertab">
+        <?php if ($userinfo['logined']) { echo $USER->userTab($userinfo['UNAME']); }?>
     </div>
     <div class="content">
         <?php

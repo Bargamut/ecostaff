@@ -23,9 +23,9 @@ include('../top.php');?>
 <div class="main ">
     <div class="header">
         <?=SITE_LOGO?>
-        <div id="login_auth">
-            <?=$userinfo['logined'] ? $USER->userTab($userinfo['UNAME']) : $USER->mAuthForm();?>
-        </div>
+    </div>
+    <div class="usertab">
+        <?php if ($userinfo['logined']) { echo $USER->userTab($userinfo['UNAME']); }?>
     </div>
     <div class="content">
         <form name="projEdit" method="post" action="action.php" enctype="multipart/form-data">
@@ -48,7 +48,8 @@ include('../top.php');?>
 
             $project        = $DB->db_query('SELECT * FROM projects WHERE `number`=%d LIMIT 1', [$_GET['p']]);
             $client         = $DB->db_query('SELECT * FROM clients WHERE `id`=%d LIMIT 1',      [$project['clientid']]);
-            $p_payvariants  = $DB->db_query('SELECT * FROM projects_payvariants',   [$project['payvariant']]);
+            $p_payvariants  = $DB->db_query('SELECT * FROM projects_payvariants',   ['']);
+            $p_status       = $DB->db_query('SELECT * FROM projects_status',        ['']);
             $managers       = $DB->db_query('SELECT `id`, `fio` FROM users_bio',    ['']);
             $teachers       = $DB->db_query('SELECT `id`, `fio` FROM teachers',     ['']);
             $filials        = $DB->db_query('SELECT * FROM filial',         ['']);
@@ -59,17 +60,20 @@ include('../top.php');?>
             $p_forms        = tplSelect($p_forms,       $project['form'],       'name');
             $managers       = tplSelect($managers,      $project['manager'],    'fio');
             $p_payvariants  = tplSelect($p_payvariants, $project['payvariant'], 'name');
+            $p_status       = tplSelect($p_status,      $project['status'],     'name');
 
-            $edit_tpl = file_get_contents(SITE_ROOT.'/tpl/projForm.html');
+            $edit_tpl = file_get_contents(SITE_ROOT.'/tpl/forms/projForm.html');
             $edit_tpl = str_replace('{number}',     $project['number'], $edit_tpl);
             $edit_tpl = str_replace('{date}',       $project['date'],   $edit_tpl);
             $edit_tpl = str_replace('{cost}',       $project['cost'],   $edit_tpl);
             $edit_tpl = str_replace('{filial}',     $filials,           $edit_tpl);
+            $edit_tpl = str_replace('{status}',     $p_status,          $edit_tpl);
             $edit_tpl = str_replace('{manager}',    $managers,          $edit_tpl);
             $edit_tpl = str_replace('{teacher}',    $teachers,          $edit_tpl);
             $edit_tpl = str_replace('{fio}',        $client['fio'],     $edit_tpl);
             $edit_tpl = str_replace('{phone}',      $client['phone'],   $edit_tpl);
             $edit_tpl = str_replace('{email}',      $client['email'],   $edit_tpl);
+            $edit_tpl = str_replace('{note}',       $client['note'],    $edit_tpl);
             $edit_tpl = str_replace('{skype}',      $client['skype'],   $edit_tpl);
             $edit_tpl = str_replace('{form}',       $p_forms,           $edit_tpl);
             $edit_tpl = str_replace('{programm}',   $project['programm'],   $edit_tpl);

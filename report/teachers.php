@@ -21,9 +21,9 @@
 <div class="main ">
     <div class="header">
         <?=SITE_LOGO?>
-        <div id="login_auth">
-            <?=$userinfo['logined'] ? $USER->userTab($userinfo['UNAME']) : $USER->mAuthForm();?>
-        </div>
+    </div>
+    <div class="usertab">
+        <?php if ($userinfo['logined']) { echo $USER->userTab($userinfo['UNAME']); }?>
     </div>
     <div class="content">
         <?php
@@ -76,7 +76,7 @@
                 '</tr>';
         }
         $t_result .= '</table>';
-        $main_tpl = file_get_contents(SITE_ROOT.'/tpl/teachPage.html');
+        $main_tpl = file_get_contents(SITE_ROOT.'/tpl/reports/teachPage.html');
         $main_tpl = str_replace('{teachers}', $t_result, $main_tpl);
         echo $main_tpl;
         ?>

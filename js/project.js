@@ -15,7 +15,8 @@ function init() {
     if ($('.status').val() == 'new') {
         $('.submEdit, .submClose').parent().remove();
     } else {
-        $('#number, #cost, #date, #filial, #hours, #payvariant').attr('disabled', true);
+        $('#number').attr('readonly', true);
+        $('#cost, #date, #filial, #hours, #payvariant').attr('disabled', true);
         $('.etap').each(function() {
             if ($(this).val() > 0) { $(this).attr('readonly', true); }
         });

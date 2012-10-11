@@ -16,17 +16,16 @@
 <div class="main ">
     <div class="header">
         <?=SITE_LOGO?>
-        <div id="login_auth">
-            <?=$userinfo['logined'] ? $USER->userTab($userinfo['UNAME']) : $USER->mAuthForm();?>
-        </div>
+    </div>
+    <div class="usertab">
+        <?php if ($userinfo['logined']) { echo $USER->userTab($userinfo['UNAME']); }?>
     </div>
     <div class="content">
         <ul>
             <li><a href="/project/edit.php">Создать проект</a></li>
-            <li><a href="/project/">Текущие проекты</a></li>
-            <li><a href="/staff/">Новый преподаватель</a></li>
-            <li><a href="#">База преподавателей</a></li>
-            <li><a href="/registration/">Новый сотрудник</a></li>
+            <li><a href="/report/projects.php">Текущие проекты</a></li>
+            <li><a href="/report/teachers.php">База преподавателей</a></li>
+            <li><a href="/staff/edit.php">Новый сотрудник</a></li>
             <li><a href="#">Персонал</a></li>
         </ul>
     </div>

@@ -22,13 +22,14 @@ include('../top.php');?>
 <div class="main ">
     <div class="header">
         <?=SITE_LOGO?>
-        <div id="login_auth">
-            <?=$userinfo['logined'] ? $USER->userTab($userinfo['UNAME']) : $USER->mAuthForm();?>
-        </div>
+    </div>
+    <div class="usertab">
+        <?php if ($userinfo['logined']) { echo $USER->userTab($userinfo['UNAME']); }?>
     </div>
     <div class="content">
         <?php
-        $projects       = $DB->db_query('SELECT * FROM projects ORDER BY `id` DESC LIMIT 50', ['']);
+        $projects       = $DB->db_query('SELECT * FROM projects ORDER BY `id` DESC LIMIT 50',   ['']);
+        $status         = $DB->db_query('SELECT `name` FROM projects_status ORDER BY `id`',     ['']);
         $filials        = $DB->db_query('SELECT * FROM filial',     ['']);
         $clients        = $DB->db_query('SELECT * FROM clients',    ['']);
         $p_forms        = $DB->db_query('SELECT * FROM projects_form',          ['']);
@@ -36,8 +37,8 @@ include('../top.php');?>
         $teachers       = $DB->db_query('SELECT `id`, `fio` FROM teachers',     ['']);
         $managers       = $DB->db_query('SELECT `id`, `fio` FROM users_bio',    ['']);
 
-
         $p_result = '<table border="0" cellspadding="0" cellspacing="0">';
+
         foreach ($projects as $k => $v) {
             if ($k == 0) {
                 $p_result .= '<tr class="caption">'.
@@ -57,7 +58,6 @@ include('../top.php');?>
                     '<td>Возврат</td>'.
                     '</tr>';
             }
-            $v['complete'] = $v['complete'] ? 'Завершено' : 'В процессе';
 
             $man_fio    = $SITE->fioFormat($managers[$v['manager'] - 1]['fio']);
             $teach_fio  = $SITE->fioFormat($teachers[$v['teacher'] - 1]['fio']);
@@ -77,12 +77,12 @@ include('../top.php');?>
                 '<td>'.$v['hours'].'</td>'.
                 '<td>'.$v['hours2'].'</td>'.
                 '<td>'.$v['wagerate'].'</td>'.
-                '<td>'.$v['complete'].'</td>'.
+                '<td>'.$status[$v['status'] - 1]['name'].'</td>'.
                 '<td>'.$v['return'].'</td>'.
                 '</tr>';
         }
         $p_result .= '</table>';
-        $main_tpl = file_get_contents(SITE_ROOT.'/tpl/projPage.html');
+        $main_tpl = file_get_contents(SITE_ROOT.'/tpl/reports/projPage.html');
         $main_tpl = str_replace('{projects}', $p_result, $main_tpl);
         echo $main_tpl;
         ?>

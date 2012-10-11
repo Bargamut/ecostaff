@@ -37,7 +37,10 @@ hr {
     margin: 0px 0px -70px;
 }
 
-.header { position: relative; }
+.header { position: relative; height: 190px; background-image: url('/img/default/logo_bg.jpg'); margin-bottom: 5px; }
+.logo1, .logo2 { border: 0px; }
+.logo2 { float: right;}
+.usertab { height: 30px; padding: 5px 10px; text-align: right; }
 .content { padding: 5px 10px 15px; }
 
 .footer, .push { height: 70px; width: 900px; margin: 0px auto; text-align: center; }

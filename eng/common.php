@@ -8,5 +8,5 @@
 
 define('SITE_ROOT'  ,   $_SERVER['DOCUMENT_ROOT']);
 define('SITE_ICON'  ,   '/favicon.ico');
-define('SITE_LOGO'  ,   '<img src="/img/default/logo.jpg" align="top" />');
+define('SITE_LOGO'  ,   '<a href="/"><img class="logo2" src="/img/default/logo2.png"><img class="logo1" src="/img/default/logo1.png" /></a>');
 ?>

@@ -36,9 +36,10 @@ if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btn
                         $_POST['fio'],
                         $_POST['phone'],
                         $_POST['email'],
-                        $_POST['skype']
+                        $_POST['skype'],
+                        $_POST['note']
                     );
-                    $DB->db_query('INSERT INTO clients (`fio`, `phone`, `email`, `skype`) VALUES (%s, %s, %s, %s)', $client_params);
+                    $DB->db_query('INSERT INTO clients (`fio`, `phone`, `email`, `skype`, `note`) VALUES (%s, %s, %s, %s, %s)', $client_params);
                     $client['id'] = mysql_insert_id();
                 }
 
@@ -74,13 +75,20 @@ if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btn
                         $_POST['fio'],
                         $_POST['phone'],
                         $_POST['email'],
-                        $_POST['skype']
+                        $_POST['skype'],
+                        $_POST['note']
                     );
-                    $DB->db_query('INSERT INTO clients (`fio`, `phone`, `email`, `skype`) VALUES (%s, %s, %s, %s)', $client_params);
+                    $DB->db_query('INSERT INTO clients (`fio`, `phone`, `email`, `skype`, `note`) VALUES (%s, %s, %s, %s, %s)', $client_params);
                     $client['id'] = mysql_insert_id();
+                } else {
+                    $client_params = array(
+                        $_POST['note'],
+                        $client['id']
+                    );
+                    $DB->db_query('UPDATE clients SET `note`=%s WHERE `id`=%d LIMIT 1', $client_params);
                 }
 
-                $_POST['complete'] = ($_POST['return'] > 0) ?  1 : 0;
+                if ($_POST['return'] > 0) { $_POST['status'] = 4; }
                 $proj_params = array(
                     $_POST['hours2'],
                     $_POST['programm'],
@@ -90,18 +98,18 @@ if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btn
                     $_POST['etap2'],
                     $_POST['etap3'],
                     $_POST['etap4'],
-                    $_POST['complete'],
+                    $_POST['status'],
                     $_POST['return'],
                     $_POST['number']
                 );
                 echo '<pre>';
                 print_r($proj_params);
                 echo '</pre>';
-                $query_fields = '`hours2`=%d, `programm`=%s, `teacher`=%d, `wagerate`=%d, `etap1`=%d, `etap2`=%d, `etap3`=%d, `etap4`=%d, `complete`=%d, `return`=%d';
-                $DB->db_query('UPDATE projects SET ' . $query_fields . ' WHERE `number`=%d', $proj_params);
+                $query_fields = '`hours2`=%d, `programm`=%s, `teacher`=%d, `wagerate`=%d, `etap1`=%d, `etap2`=%d, `etap3`=%d, `etap4`=%d, `status`=%d, `return`=%d';
+                $DB->db_query('UPDATE projects SET ' . $query_fields . ' WHERE `number`=%s', $proj_params);
                 break;
             case 'close':
-                $DB->db_query('UPDATE projects SET `complete`=%d WHERE `number`=%d', [1, $_POST['number']]);
+                $DB->db_query('UPDATE projects SET `status`=%d WHERE `number`=%d', [4, $_POST['number']]);
                 break;
             default: break;
         }
