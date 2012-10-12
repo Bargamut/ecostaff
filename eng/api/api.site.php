@@ -37,8 +37,8 @@ class Site{
         return $var;
     }
 
-    function dateFormat() {
-
+    function dateFormat($strdate, $format = 'd.m.y') {
+        return date($format, strtotime($strdate));
     }
 
     function fioFormat($fio = '') {

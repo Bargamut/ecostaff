@@ -12,17 +12,21 @@ class Database {
     }
     function db_query() {
         $args = func_get_args();
-        if (func_num_args() >= 2) {
-            $q = array_shift($args);
-            $p = array_shift($args);
+        if (func_num_args() >= 1) {
+            $q = array_shift($args); // Запрос
+            $p = array_shift($args); // Подставляемые параметры
 
-            $q = $this->quoteSet($q);
+            // Если есть подставляемые параметры
+            if (isset($p)){
+                $q = $this->quoteSet($q);
 
-            foreach($p as $k => $v) {
-                $p[$k] = $this->strFormat($v);
+                foreach($p as $k => $v) {
+                    $p[$k] = $this->strFormat($v);
+                }
+
+                $q = vsprintf($q, $p);
             }
 
-            $q = vsprintf($q, $p);
             if (!$q) { return false; }
 
             $r = mysql_query($q) or die(mysql_error());

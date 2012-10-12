@@ -24,9 +24,10 @@
         <ul>
             <li><a href="/project/edit.php">Создать проект</a></li>
             <li><a href="/report/projects.php">Текущие проекты</a></li>
-            <li><a href="/report/teachers.php">База преподавателей</a></li>
             <li><a href="/staff/edit.php">Новый сотрудник</a></li>
+            <li><a href="/report/teachers.php">База преподавателей</a></li>
             <li><a href="#">Персонал</a></li>
+            <li><a href="/report/rates.php">Плановый показатель</a></li>
         </ul>
     </div>
     <div class="push"></div>
