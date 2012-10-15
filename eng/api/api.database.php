@@ -31,6 +31,8 @@ class Database {
 
             $r = mysql_query($q) or die(mysql_error());
             $r = $this->db_make_result($r, $q);
+
+            if (!isset($r[0])) { $r = [$r]; }
         } else {
             $r = 'Нет нужных данных!';
         }

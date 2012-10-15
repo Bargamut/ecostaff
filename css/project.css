@@ -4,6 +4,9 @@
  * Time: 5:08
  */
 
+.filtersubm { border: 1px #95E585 solid; background-color: #C5F6B0; padding: 5px; cursor: pointer; }
+.filtersubm:hover { border: 1px #9FF18F solid; background-color: #CDFFB7; }
+
 .projects table { width: 100%; }
 .projects table tr td { padding: 5px; border: 1px #eee dotted; }
 .projects table tr.caption { text-align: center; font-size: 18px; font-weight: bold; background-color: #ddd; }

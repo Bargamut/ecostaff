@@ -106,7 +106,7 @@ if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btn
                 print_r($proj_params);
                 echo '</pre>';
                 $query_fields = '`hours2`=%d, `programm`=%s, `teacher`=%d, `wagerate`=%d, `etap1`=%d, `etap2`=%d, `etap3`=%d, `etap4`=%d, `status`=%d, `return`=%d';
-                $DB->db_query('UPDATE projects SET ' . $query_fields . ' WHERE `number`=%s', $proj_params);
+                $DB->db_query('UPDATE projects SET ' . $query_fields . ' WHERE `number`=%d', $proj_params);
                 break;
             case 'close':
                 $DB->db_query('UPDATE projects SET `status`=%d WHERE `number`=%d', [4, $_POST['number']]);

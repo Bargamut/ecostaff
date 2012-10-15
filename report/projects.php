@@ -9,16 +9,22 @@ include('../top.php');?>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="../css/ui/redmond/jquery-ui.css" />
     <link rel="stylesheet" type="text/css" href="../css/default.css" />
     <link rel="stylesheet" type="text/css" href="../css/auth.css" />
     <link rel="stylesheet" type="text/css" href="../css/project.css" />
     <link rel="shortcut icon" href="<?=SITE_ICON?>" type="image/x-icon">
     <title><?=SITE_TITLE?></title>
-    <script type="text/javascript" src="../js/jquery/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="../js/jquery/jquery-1.8.2.js"></script>
+    <script type="text/javascript" src="../js/jquery/jquery-ui-1.9.0.custom.min.js"></script>
+    <script type="text/javascript" src="../js/jquery/jquery-ui-i18n.js"></script>
+    <script type="text/javascript" src="../js/jquery/jquery.livequery.js"></script>
+    <script type="text/javascript" src="../js/report_projects.js"></script>
     <script type="text/javascript" src="../js/auth.js"></script>
 </head>
 
 <body>
+
 <div class="main ">
     <div class="header">
         <?=SITE_LOGO?>
@@ -28,18 +34,47 @@ include('../top.php');?>
     </div>
     <div class="content">
         <?php
-        $projects       = $DB->db_query('SELECT * FROM projects ORDER BY `id` DESC LIMIT 50',   ['']);
+        /**
+         * Функция формирования массива значений в <option>
+         * @param $needle array - массив значений
+         * @param $key - значение для селекта
+         * @return string - возвращает <opt...><opt...><opt...>
+         */
+        function tplSelect($needle, $key, $ind) {
+            $r = '';
+            foreach ($needle as $k => $v) {
+                $s = $v['id'] == $key ? 'selected' : '';
+                $r .= '<option '.$s.' value="'.$v['id'].'">'.$v[$ind].'</option>';
+            }
+            return $r;
+        }
+
+        $where = array();
+        $vals = array();
+
+        if (!empty($_GET['datebeg']))   { $where[] = '`date` >= %s'; $vals['datebeg'] = $_GET['datebeg']; }
+        if (!empty($_GET['dateend']))   { $where[] = '`date` <= %s'; $vals['dateend'] = $_GET['dateend']; }
+        if (!empty($_GET['numbeg']))    { $where[] = '`number` >= %d'; $vals['numbeg'] = $_GET['numbeg']; }
+        if (!empty($_GET['numend']))    { $where[] = '`number` <= %d'; $vals['numend'] = $_GET['numend']; }
+        if (!empty($_GET['form']))      { $where[] = '`form` = %d'; $vals['form'] = $_GET['form']; }
+        if (!empty($_GET['payvariant'])){ $where[] = '`payvariant` = %d'; $vals['payvariant'] = $_GET['payvariant']; }
+        if (!empty($_GET['manager']))   { $where[] = '`manager` = %d'; $vals['manager'] = $_GET['manager']; }
+
+        $where = count($where) > 0 ? 'WHERE ' . implode(' AND ', $where) : '';
+
+        $projects       = $DB->db_query('SELECT * FROM projects ' . $where . ' ORDER BY `date` DESC LIMIT 50', $vals);
         $status         = $DB->db_query('SELECT `name` FROM projects_status ORDER BY `id`',     ['']);
         $filials        = $DB->db_query('SELECT * FROM filial',     ['']);
         $clients        = $DB->db_query('SELECT * FROM clients',    ['']);
         $p_forms        = $DB->db_query('SELECT * FROM projects_form',          ['']);
         $p_payvariants  = $DB->db_query('SELECT * FROM projects_payvariants',   ['']);
         $teachers       = $DB->db_query('SELECT `id`, `fio` FROM teachers',     ['']);
-        $managers       = $DB->db_query('SELECT `id`, `fio` FROM users_bio',    ['']);
+        $managers       = $DB->db_query('SELECT ub.`id`, ub.`fio`, us.`level` FROM users_bio AS ub LEFT JOIN users_site as us ON ub.`id` = us.`id` ORDER BY ub.`id`', ['']);
 
-        $p_result = '<table border="0" cellspadding="0" cellspacing="0">';
+        if (!empty($projects[0])) {
+            $p_result = '<table border="0" cellspadding="0" cellspacing="0">';
 
-        foreach ($projects as $k => $v) {
+            foreach ($projects as $k => $v) {
             if ($k == 0) {
                 $p_result .= '<tr class="caption">'.
                     '<td></td>'.
@@ -81,9 +116,29 @@ include('../top.php');?>
                 '<td>'.$v['return'].'</td>'.
                 '</tr>';
         }
-        $p_result .= '</table>';
+
+            $p_result .= '</table>';
+        } else { $p_result = 'Не найдено ни одного проекта!'; }
+
+        foreach($managers as $k => $v) {
+            if (!preg_match('/MF|MP/', $v['level'])) { unset($managers[$k]); }
+        }
+
+        $p_form = '<option value="0">Все</option>' . tplSelect($p_forms, $_GET['form'], 'name');
+        $p_payvariant = '<option value="0">Все</option>' . tplSelect($p_payvariants, $_GET['payvariant'], 'name');
+        $manager = '<option value="0">Все</option>' . tplSelect($managers, $_GET['manager'], 'fio');
+
         $main_tpl = file_get_contents(SITE_ROOT.'/tpl/reports/projPage.html');
-        $main_tpl = str_replace('{projects}', $p_result, $main_tpl);
+
+        $main_tpl = str_replace('{datebeg}',    $vals['datebeg'],   $main_tpl);
+        $main_tpl = str_replace('{dateend}',    $vals['dateend'],   $main_tpl);
+        $main_tpl = str_replace('{numbeg}',     $vals['numbeg'],    $main_tpl);
+        $main_tpl = str_replace('{numend}',     $vals['numend'],    $main_tpl);
+        $main_tpl = str_replace('{form}',       $p_form,            $main_tpl);
+        $main_tpl = str_replace('{payvariant}', $p_payvariant,      $main_tpl);
+        $main_tpl = str_replace('{form}',       $p_form,            $main_tpl);
+        $main_tpl = str_replace('{manager}',    $manager,           $main_tpl);
+        $main_tpl = str_replace('{projects}',   $p_result,          $main_tpl);
         echo $main_tpl;
         ?>
     </div>
