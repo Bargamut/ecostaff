@@ -22,7 +22,7 @@
     </div>
     <div class="content">
         <ul>
-            <li><a href="/project/edit.php">Создать проект</a></li>
+            <li><a href="/project/index.php">Создать проект</a></li>
             <li><a href="/report/projects.php">Текущие проекты</a></li>
             <li><a href="/staff/edit.php">Новый сотрудник</a></li>
             <li><a href="/report/teachers.php">База преподавателей</a></li>

@@ -23,13 +23,15 @@ function dateFormR(date) {
 function filters() {
     var param, dLoc = window.location, p = new Array();
 
-    if ($('#datebeg').val() != '')  { p.push('datebeg=' + dateForm($('#datebeg').val())); }
-    if ($('#dateend').val() != '')  { p.push('dateend=' + dateForm($('#dateend').val())); }
-    if ($('#numbeg').val() != '')   { p.push('numbeg=' + $('#numbeg').val()); }
-    if ($('#numend').val() != '')   { p.push('numend=' + $('#numend').val()); }
-    if ($('#form').val() != 0)      { p.push('form=' + $('#form').val()); }
-    if ($('#payvariant').val() != 0){ p.push('payvariant=' + $('#payvariant').val()); }
-    if ($('#manager').val() != 0)   { p.push('manager=' + $('#manager').val()); }
+    if ($('#datebeg').val()     != '') { p.push('datebeg=' + dateForm($('#datebeg').val())); }
+    if ($('#dateend').val()     != '') { p.push('dateend=' + dateForm($('#dateend').val())); }
+    if ($('#numbeg').val()      != '') { p.push('numbeg=' + $('#numbeg').val()); }
+    if ($('#numend').val()      != '') { p.push('numend=' + $('#numend').val()); }
+    if ($('#form').val()        != 0)  { p.push('form=' + $('#form').val()); }
+    if ($('#payvariant').val()  != 0)  { p.push('payvariant=' + $('#payvariant').val()); }
+    if ($('#manager').val()     != 0)  { p.push('manager=' + $('#manager').val()); }
+    if ($('#debt').val()        != 0)  { p.push('debt=' + $('#debt').val()); }
+    if ($('#return').val()      != 0)  { p.push('return=' + $('#return').val()); }
 
     param = '?' + p.join('&');
 

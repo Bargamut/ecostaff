@@ -23,5 +23,5 @@ include_once('api/api.economic.php');       // API Экономических д
 $DB     = new Database();
 $SITE   = new Site();
 $USER   = new Users($DB);
-$ECON   = new Economic();
+$ECON   = new Economic($DB);
 ?>

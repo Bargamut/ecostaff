@@ -1,5 +1,31 @@
 <?php
 class Economic {
+    private $DB = null;
+    public function __construct($DB) {
+        $this->DB = $DB;
+    }
+
+    /**
+     * Запись платежейпо проекту
+     * @param $pid - ID проекта
+     * @param $pays - платежи
+     */
+    function makePay($pid, $pays) {
+        $i = count($pays);
+        $pay = ($i > 1) ? $pays[$i - 1] : $pays[0];
+
+        if ($i > 1) {
+            if ($pay != '') {
+                $proj_pays = array($pay, date('Y-m-d'), $pid);
+                $q_str = 'UPDATE projects_pays SET `pay' . $i . '`=%d, `date' . $i . '`=%s WHERE `id` = %d';
+            }
+        } else {
+            $proj_pays = array($pay, date('Y-m-d'));
+            $q_str = 'INSERT INTO projects_pays (`pay1`, `date1`) VALUES (%d, %s)';
+        }
+        $this->DB->db_query($q_str, $proj_pays);
+    }
+
     /**
      * Зарплата Преподавателя
      * @param $hours
@@ -165,8 +191,8 @@ class Economic {
      * Долг по договору
      * @param $proj
      */
-    function debt($proj) {
-        return $proj['cost'] - $this->payed($proj);
+    function debt($cost, $pays) {
+        return $cost - $this->payed($pays);
     }
 
     /**
@@ -174,7 +200,9 @@ class Economic {
      * @param $proj
      * @return mixed
      */
-    function payed($proj) {
-        return $proj['etap1'] + $proj['etap2'] + $proj['etap3'] + $proj['etap4'];
+    function payed($pays) {
+        $sum = 0;
+        foreach($pays as $k => $v) { $sum += $v; }
+        return $sum;
     }
 }
