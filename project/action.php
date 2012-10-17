@@ -6,9 +6,6 @@
  */
 
 include('../top.php');
-echo '<pre>';
-print_r($_POST);
-echo '</pre>';
 
 if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btnClose'])) {
     if (!empty($_POST['btnClose'])) {
@@ -60,13 +57,11 @@ if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btn
                     $SITE->dateFormat($_POST['date'], 'Y-m-d')
                 );
 
-                echo '<pre>';
-                print_r($proj_params);
-                echo '</pre>';
                 $query_fields = '`clientid`, `filial`, `number`, `hours`, `hours2`, `form`, `programm`, `payvariant`, `teacher`, `wagerate`, `cost`, `payed`, `manager`, `date`';
                 $DB->db_query('INSERT INTO projects (' . $query_fields . ') VALUES (%d, %d, %d, %d, %d, %d, %s, %d, %d, %d, %d, %d, %d, %s)', $proj_params);
-
-                $ECON->makePay(mysql_insert_id(), $_POST['pay']);
+                $_POST['pid'] = mysql_insert_id();
+                $ECON->makePay($_POST['pid'], $_POST['pay']);
+                $ECON->countHours($_POST['pid'], $_POST['teacher'], $_POST['oldhours2'], $_POST['hours2'], $_POST['wagerate']);
                 break;
             case 'update':
                 $client = $DB->db_query('SELECT `id` FROM clients WHERE `fio`=%s', [$_POST['fio']]);
@@ -100,26 +95,22 @@ if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btn
                     $_POST['return'],
                     $_POST['number']
                 );
-                echo '<pre>';
-                print_r($proj_params);
-                echo '</pre>';
                 $query_fields = '`payed`=%d, `hours2`=%d, `programm`=%s, `teacher`=%d, `wagerate`=%d, `status`=%d, `return`=%d';
                 $DB->db_query('UPDATE projects SET ' . $query_fields . ' WHERE `number`=%d', $proj_params);
                 $ECON->makePay($_POST['pid'], $_POST['pay']);
+                $ECON->countHours($_POST['pid'], $_POST['teacher'], $_POST['oldhours2'], $_POST['hours2'], $_POST['wagerate']);
                 break;
             case 'close':
                 $DB->db_query('UPDATE projects SET `payed`=%d, `status`=%d WHERE `number`=%d', [$ECON->payed($_POST['pay']), 4, $_POST['number']]);
                 $ECON->makePay($_POST['pid'], $_POST['pay']);
+                $ECON->countHours($_POST['pid'], $_POST['teacher'], $_POST['oldhours2'], $_POST['hours2'], $_POST['wagerate']);
                 break;
             default: break;
         }
+        header('Location: /project/?p=' . $_POST['pid']);
     } else {
         $r = '';
         foreach($SITE->err['send'] as $k => $v) { $r .= '<b>Ошибка!</b> Некорректное значение: ' . $v . '!<br />'; }
         echo $r;
     };
-
-    echo '<pre>';
-    print_r($_POST);
-    echo '</pre>';
 }

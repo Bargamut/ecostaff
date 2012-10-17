@@ -4,9 +4,9 @@
  * Time: 5:08
  */
 
-.staff table { width: 100%; }
-.staff table tr td { padding: 5px; border: 1px #eee dotted; }
-.staff table tr.caption { text-align: center; font-size: 18px; font-weight: bold; background-color: #ddd; }
+.teachers table { width: 100%; }
+.teachers table tr td { padding: 5px; border: 1px #eee dotted; }
+.teachers table tr.caption { text-align: center; font-size: 18px; font-weight: bold; background-color: #ddd; }
 
 ul { width: 50%; margin: 5px auto; padding: 5px 0px; list-style: none; border: 1px #DFE4EE dotted; }
 ul li { padding: 0px 5px 0px 10px; clear: both; text-align: right; }
