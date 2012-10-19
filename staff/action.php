@@ -6,9 +6,6 @@
  */
 
 include('../top.php');
-echo '<pre>';
-print_r($_POST);
-echo '</pre>';
 
 if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btnClose'])) {
     if (!empty($_POST['btnClose'])) {
@@ -78,13 +75,10 @@ if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btn
 //                break;
             default: break;
         }
+        header('Location: /report/staff.php');
     } else {
         $r = '';
         foreach($SITE->err['send'] as $k => $v) { $r .= '<b>Ошибка!</b> Некорректное значение: ' . $v . '!<br />'; }
         echo $r;
     };
-
-    echo '<pre>';
-    print_r($_POST);
-    echo '</pre>';
 }

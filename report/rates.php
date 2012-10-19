@@ -54,11 +54,27 @@ include('../top.php');?>
         if (!empty($_GET['datebeg']))   { $where[] = '`date` >= %s'; $vals['datebeg'] = $_GET['datebeg']; }
         if (!empty($_GET['dateend']))   { $where[] = '`date` <= %s'; $vals['dateend'] = $_GET['dateend']; }
         if (!empty($_GET['payvariant'])){ $where[] = '`payvariant` = %d'; $vals['payvariant'] = $_GET['payvariant']; }
-        if (!empty($_GET['manager']))   { $where[] = '`manager` = %d'; $vals['manager'] = $_GET['manager']; }
+        if (!empty($_GET['manager']))   { $where[] = '`mid` = %d'; $vals['manager'] = $_GET['manager']; }
 
         $where = count($where) > 0 ? 'WHERE ' . implode(' AND ', $where) : '';
 
-        $projects       = $DB->db_query('SELECT * FROM projects ' . $where . ' ORDER BY `date` DESC', $vals);
+        $p_pays         = $DB->db_query('SELECT `pid`, `pay` FROM projects_pays ' . $where . ' ORDER BY `date` DESC', $vals);
+
+        $pays = array();
+        $p_keys = array('val' => [], 'type' => []);
+        foreach($p_pays as $k => $v) {
+            $pays[] = $v['pay'];
+            if (!in_array($v['pid'], $p_keys['val'])) {
+                $p_keys['type'][] = '%d';
+                $p_keys['val'][] = $v['pid'];
+            }
+        }
+
+        $where = [count($p_keys['type']) > 1 ? '`id` IN (' . implode(',', $p_keys['type']) . ')' : '`id` = %d'];
+        $where = count($where) > 0 ? 'WHERE ' . implode(' AND ', $where) : '';
+
+        $projects       = $DB->db_query('SELECT * FROM projects ' . $where . ' ORDER BY `date` DESC', $p_keys['val']);
+
         $p_forms        = $DB->db_query('SELECT * FROM projects_form ORDER BY `id`');
         $p_payvariants  = $DB->db_query('SELECT * FROM projects_payvariants ORDER BY `id`');
         $p_status       = $DB->db_query('SELECT * FROM projects_status ORDER BY `id`');
@@ -83,7 +99,7 @@ include('../top.php');?>
                         '</tr>';
                 }
 
-                $man_fio    = $SITE->fioFormat($managers[$v['manager'] - 1]['fio']);
+                $man_fio    = $SITE->fioFormat($managers[$v['mid'] - 1]['fio']);
                 $client_fio = $SITE->fioFormat($clients[$v['clientid'] - 1]['fio']);
 
                 $result .= '<tr>'.
@@ -104,10 +120,10 @@ include('../top.php');?>
                     if ($mv['id'] == $_GET['manager']) {
                         switch ($mv['level']) {
                             case 'M': break;
-                            case 'MP': $result .= 'Итого: '.$ECON->salManager($projects); break;
-                            case 'MF': $result .= 'Итого: '.$ECON->salBigManager($projects); break;
-                            case 'AF': $result .= 'Итого: '.$ECON->salFilialDirector($projects); break;
-                            case 'AI': $result .= 'Итого: '.$ECON->salInitDirector($projects); break;
+                            case 'MP': $result .= 'Итого: '.$ECON->salManager($pays); break;
+                            case 'MF': $result .= 'Итого: '.$ECON->salBigManager($pays); break;
+                            case 'AF': $result .= 'Итого: '.$ECON->salFilialDirector($pays); break;
+                            case 'AI': $result .= 'Итого: '.$ECON->salInitDirector($pays); break;
                             case 'A': break;
                             default: break;
                         }

@@ -36,10 +36,10 @@
             return implode(', ', $arr);
         }
 
-        $teachers       = $DB->db_query('SELECT * FROM teachers ORDER BY `id`',         ['']);
-        $languages      = $DB->db_query('SELECT * FROM languages ORDER BY `id`',        ['']);
-        $t_grades       = $DB->db_query('SELECT * FROM teachers_grades ORDER BY `id`',  ['']);
-        $stations       = $DB->db_query('SELECT * FROM stations ORDER BY `id`',         ['']);
+        $teachers       = $DB->db_query('SELECT * FROM teachers ORDER BY `id`');
+        $languages      = $DB->db_query('SELECT * FROM languages ORDER BY `id`');
+        $t_grades       = $DB->db_query('SELECT * FROM teachers_grades ORDER BY `id`');
+        $stations       = $DB->db_query('SELECT * FROM stations ORDER BY `id`');
 
         unset($teachers[0]);
         $teachers = array_values($teachers);

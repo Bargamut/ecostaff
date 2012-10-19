@@ -65,7 +65,7 @@ include('../top.php');?>
             $email      = $teacher[0]['email'] ? $teacher[0]['email'] : $account[0]['email'];
             $id         = $teacher[0]['id']    ? $teacher[0]['id']    : $user[0]['id'];
 
-            $filials    = tplSelect($filials,   'id',   'name',     $account[0]['filial']);
+            $filials    = tplSelect($filials,   'id',   'name',     $account[0]['fid']);
             $lvls       = tplSelect($lvls,      'lvl',  'lvlname',  $account[0]['level']);
             $stations   = tplSelect($stations,  'id',   'name',     $teacher[0]['metro']);
             $grades     = tplSelect($grades,    'id',   'name',     $teacher[0]['grade']);

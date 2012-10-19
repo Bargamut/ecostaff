@@ -5,8 +5,8 @@
  */
 
 .rates table { width: 100%; }
-.rates table tr td { padding: 5px; border: 1px #eee dotted; }
-.rates table tr.caption { text-align: center; font-size: 18px; font-weight: bold; background-color: #ddd; }
+.rates table tr td { padding: 5px; border: 1px #9EA3DD dotted; }
+.rates table tr.caption { text-align: center; font-size: 18px; font-weight: bold; background-color: #3A50C7; color: #EEE; }
 .rates table tr td.date { white-space: nowrap; }
 
 ul { width: 50%; margin: 5px auto; padding: 5px 0px; list-style: none; border: 1px #DFE4EE dotted; }
@@ -15,7 +15,7 @@ ul li label { line-height: 25px; padding: 0px 25px 0px 0px; }
 ul li input { width: 200px; }
 ul li select { width: 204px; }
 ul li.subhead { height: 25px; }
-ul li.subhead, ul li.submit { margin: 5px 0px; padding: 5px 0px; background-color: #EEE; text-align: center; font-size: 20px; font-weight: bold; }
+ul li.subhead, ul li.submit { margin: 5px 0px; padding: 5px 0px; background-color: #3A50C7; color: #EEE; text-align: center; font-size: 20px; font-weight: bold; }
 ul li.submit .btn { padding: 5px 10px; font-size: 20px; font-weight: bold; cursor: pointer; }
 ul li.submit .submBut { border: 1px #95E585 solid; background-color: #C5F6B0; }
 ul li.submit .submBut:hover { border: 1px #9FF18F solid; background-color: #CDFFB7; }

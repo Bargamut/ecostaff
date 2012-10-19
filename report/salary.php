@@ -52,15 +52,14 @@ include('../top.php');?>
 //        $status         = $DB->db_query('SELECT `name` FROM projects_status ORDER BY `id`');
 //        $filials        = $DB->db_query('SELECT * FROM filial');
 //        $clients        = $DB->db_query('SELECT * FROM clients');
-        $p_pays         = $DB->db_query('SELECT `pay1`, `pay2`, `pay3`, `pay4` FROM projects_pays ORDER BY `id`');
+//        $p_pays         = $DB->db_query('SELECT `pay1`, `pay2`, `pay3`, `pay4` FROM projects_pays ORDER BY `id`');
         $p_forms        = $DB->db_query('SELECT * FROM projects_form');
         $p_payvariants  = $DB->db_query('SELECT * FROM projects_payvariants');
         $teachers       = $DB->db_query('SELECT `id`, `fio` FROM teachers');
         $managers       = $DB->db_query('SELECT ub.`id`, ub.`fio`, us.`level` FROM users_bio AS ub LEFT JOIN users_site AS us ON ub.`id` = us.`id` ORDER BY ub.`id`');
 
         foreach($managers as $k => $v) {
-            if (!preg_match('/MF|MP/', $v['level'])) { unset($managers[$k]); }
-            else { $managers[$k]['fio'] = $SITE->fioFormat($v['fio']); }
+            $managers[$k]['fio'] = $SITE->fioFormat($v['fio']);
         }
 
         unset($teachers[0]);
@@ -124,7 +123,7 @@ include('../top.php');?>
         $main_tpl = str_replace('{manager}',    $manager,           $main_tpl);
         $main_tpl = str_replace('{debt}',       $p_debt,            $main_tpl);
         $main_tpl = str_replace('{return}',     $p_return,          $main_tpl);
-        $main_tpl = str_replace('{salarys}',   $p_result,          $main_tpl);
+        $main_tpl = str_replace('{salarys}',    $p_result,          $main_tpl);
         echo $main_tpl;
         ?>
     </div>

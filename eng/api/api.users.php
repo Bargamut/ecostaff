@@ -5,8 +5,6 @@
  * Time: 22:46
  */
 
-// TODO: вывести модуль Users на другой уровень абстракции - если возможно, сделать из него 1, способный порождать свои объекты (Users, Pages и т.д.)
-// TODO: преобразование дат
 class Users {
     private $DB = null;
     public function __construct($DB) {
@@ -32,7 +30,7 @@ class Users {
             $forUserSite = array($mail, $login, $password, $salt, $date_reg, $date_reg, $token, $filial_id, $lvl);
             $forUserBio = array($fio);
 
-            $this->DB->db_query('INSERT INTO users_site (`email`, `login`, `password`, `salt`, `date_reg`, `date_lastvisit`, `uid`, `filial`, `level`) VALUES (%s, %s, %s, %s, %s, %s, %s, %d, %s)', $forUserSite);
+            $this->DB->db_query('INSERT INTO users_site (`email`, `login`, `password`, `salt`, `date_reg`, `date_lastvisit`, `uid`, `fid`, `level`) VALUES (%s, %s, %s, %s, %s, %s, %s, %d, %s)', $forUserSite);
             $this->DB->db_query('INSERT INTO users_bio (`fio`) VALUES (%s)', $forUserBio);
 //            if (mysql_query($db_query) or die(mysql_error())) {
 //                return $this->auth($subm, $post['rEmail'], $post['rPass']);
@@ -228,7 +226,7 @@ class Users {
         if (hash('sha512', $_POST['pass']) != hash('sha512', $_POST['pass2'])) $result = 'not_confirm_pass|'; // равен ли пароль его подтверждению
 
         $rez = $this->DB->db_query('SELECT * FROM users_site WHERE `login`=%s LIMIT 1', [$_POST['login']]);
-        if (count($rez) != 0) $result = 'already_exist|'; // проверка на существование в БД такого же логина
+        if (count($rez[0]) != 0) $result = 'already_exist|'; // проверка на существование в БД такого же логина
 
         return ($result == ''); // если выполнение функции дошло до этого места, возвращаем true
     }
@@ -237,7 +235,7 @@ class Users {
      * Функция запроса данных пользователя
      */
     private function getUserInfo($mail) {
-        $us = $this->DB->db_query('SELECT `id`, `email`, `uid`, `date_reg`, `date_lastvisit`, `level`, `filial`, `block`, `block_reason` FROM users_site WHERE `email`=%s LIMIT 1', [$mail]);
+        $us = $this->DB->db_query('SELECT `id`, `email`, `uid`, `date_reg`, `date_lastvisit`, `level`, `fid`, `block`, `block_reason` FROM users_site WHERE `email`=%s LIMIT 1', [$mail]);
         $ub = $this->DB->db_query('SELECT `fio` FROM users_bio WHERE `id` = %d LIMIT 1', [$us['id']]);
         $ul = $this->DB->db_query('SELECT `rights`, `lvlname` FROM users_lvl WHERE `lvl` = %s LIMIT 1', [$us['level']]);
 
@@ -249,7 +247,7 @@ class Users {
      * Функция запроса данных профиля, кроме гостевого
      */
     private function getProfileInfo($mail) {
-        $us = $this->DB->db_query('SELECT `id`, `email`, `uid`, `level`, `filial`, `block`, `block_reason` FROM users_site WHERE `email`=%s AND `level` != "G" LIMIT 1', [$mail]);
+        $us = $this->DB->db_query('SELECT `id`, `email`, `uid`, `level`, `fid`, `block`, `block_reason` FROM users_site WHERE `email`=%s AND `level` != "G" LIMIT 1', [$mail]);
         $ub = $this->DB->db_query('SELECT `fio`, `birthday` FROM users_bio WHERE `id`=%d LIMIT 1', [$us['id']]);
         $ul = $this->DB->db_query('SELECT `lvlname` FROM users_lvl WHERE `lvl`=%s LIMIT 1', [$us['level']]);
 

@@ -16,6 +16,7 @@ include('../top.php');?>
     <link rel="shortcut icon" href="<?=SITE_ICON?>" type="image/x-icon">
     <title><?=SITE_TITLE?></title>
     <script type="text/javascript" src="../js/jquery/jquery-1.8.2.js"></script>
+    <script type="text/javascript" src="../js/jquery/jquery.livequery.js"></script>
     <script type="text/javascript" src="../js/jquery/jquery-ui-1.9.0.custom.min.js"></script>
     <script type="text/javascript" src="../js/jquery/jquery-ui-i18n.js"></script>
     <script type="text/javascript" src="../js/auth.js"></script>
@@ -54,24 +55,25 @@ include('../top.php');?>
                 $res = '';
                 $label = 'при подписании договора';
                 $n = 0;
+
                 if (!empty($arrPays[0])) {
-                    for ($i = 1; $i < 5; $i++) {
-                        if ($arrPays[0]['date' . $i] > '0000-00-00') {
-                            $res .= '<li><label>' . $label . '</label><input class="payed" name="pay[]" type="text" value="' . $arrPays[0]['pay' . $i] . '"></li>';
-                            $label = 'этап ' . $i;
+                    foreach($arrPays as $k => $v) {
+                        if ($v['date'] > '0000-00-00') {
+                            $res .= '<li><label>' . $label . '</label><input class="payed" name="oldpays[]" type="text" value="' . $v['pay'] . '"></li>';
+                            $label = 'этап ' . ($k + 1);
                             $n++;
                         }
                     }
                 }
 
                 if ($n < 4) {
-                    $res .= '<li><label>' . $label . '</label><input class="newpay" name="pay[]" type="text" value=""></li>';
+                    $res .= '<li><label>' . $label . '</label><input class="newpay" name="pay" type="text" value=""></li>';
                 }
                 return $res;
             }
 
             $project        = $DB->db_query('SELECT * FROM projects WHERE `id`=%d LIMIT 1', [$_GET['p']]);
-            $p_pays         = $DB->db_query('SELECT `pay1`, `pay2`, `pay3`, `pay4`, `date1`, `date2`, `date3`, `date4` FROM projects_pays WHERE `id`=%d ORDER BY `id` LIMIT 1', [$project[0]['id']]);
+            $p_pays         = $DB->db_query('SELECT `pay`, `date` FROM projects_pays WHERE `pid`=%d ORDER BY `id` LIMIT 4', [$project[0]['id']]);
             $client         = $DB->db_query('SELECT * FROM clients WHERE `id`=%d LIMIT 1', [$project[0]['clientid']]);
             $p_payvariants  = $DB->db_query('SELECT * FROM projects_payvariants',   ['']);
             $p_status       = $DB->db_query('SELECT * FROM projects_status',        ['']);
@@ -82,12 +84,12 @@ include('../top.php');?>
 
             $pays = setPays($p_pays);
 
-            $teachers       = tplSelect($teachers,      $project[0]['teacher'],    'fio');
-            $filials        = tplSelect($filials,       $project[0]['filial'],     'name');
-            $p_forms        = tplSelect($p_forms,       $project[0]['form'],       'name');
-            $managers       = tplSelect($managers,      $project[0]['manager'],    'fio');
-            $p_payvariants  = tplSelect($p_payvariants, $project[0]['payvariant'], 'name');
-            $p_status       = tplSelect($p_status,      $project[0]['status'],     'name');
+            $teachers       = tplSelect($teachers,      $project[0]['tid'],         'fio');
+            $filials        = tplSelect($filials,       $project[0]['fid'],         'name');
+            $p_forms        = tplSelect($p_forms,       $project[0]['form'],        'name');
+            $managers       = tplSelect($managers,      $project[0]['mid'],         'fio');
+            $p_payvariants  = tplSelect($p_payvariants, $project[0]['payvariant'],  'name');
+            $p_status       = tplSelect($p_status,      $project[0]['status'],      'name');
             if (isset($project[0]['date'])) { $project[0]['date'] = $SITE->dateFormat($project[0]['date'], 'd.m.Y'); }
 
             $edit_tpl = file_get_contents(SITE_ROOT.'/tpl/forms/projForm.html');

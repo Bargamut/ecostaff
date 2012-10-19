@@ -58,7 +58,7 @@ include('../top.php');?>
         if (!empty($_GET['numend']))    { $where[] = '`number` <= %d'; $vals['numend'] = $_GET['numend']; }
         if (!empty($_GET['form']))      { $where[] = '`form` = %d'; $vals['form'] = $_GET['form']; }
         if (!empty($_GET['payvariant'])){ $where[] = '`payvariant` = %d'; $vals['payvariant'] = $_GET['payvariant']; }
-        if (!empty($_GET['manager']))   { $where[] = '`manager` = %d'; $vals['manager'] = $_GET['manager']; }
+        if (!empty($_GET['manager']))   { $where[] = '`mid` = %d'; $vals['manager'] = $_GET['manager']; }
         if (!empty($_GET['debt']))      { $where[] = $_GET['debt'] == 1 ? '`cost` > `payed`' : '`cost` <= `payed`'; }
         if (!empty($_GET['return']))    { $where[] = $_GET['return'] == 1 ? '`return` > 0' : '`return` = 0'; }
 
@@ -68,15 +68,18 @@ include('../top.php');?>
         $status         = $DB->db_query('SELECT `name` FROM projects_status ORDER BY `id`');
         $filials        = $DB->db_query('SELECT * FROM filial');
         $clients        = $DB->db_query('SELECT * FROM clients');
-        $p_pays         = $DB->db_query('SELECT `pay1`, `pay2`, `pay3`, `pay4` FROM projects_pays ORDER BY `id`');
+//        $p_pays         = $DB->db_query('SELECT `pay`, FROM projects_pays ORDER BY `id`');
         $p_forms        = $DB->db_query('SELECT * FROM projects_form');
         $p_payvariants  = $DB->db_query('SELECT * FROM projects_payvariants');
         $teachers       = $DB->db_query('SELECT `id`, `fio` FROM teachers');
         $managers       = $DB->db_query('SELECT ub.`id`, ub.`fio`, us.`level` FROM users_bio AS ub LEFT JOIN users_site AS us ON ub.`id` = us.`id` ORDER BY ub.`id`');
 
         foreach($managers as $k => $v) {
-            if (!preg_match('/MF|MP/', $v['level'])) { unset($managers[$k]); }
-            else { $managers[$k]['fio'] = $SITE->fioFormat($v['fio']); }
+//            if (!preg_match('/MF|MP/', $v['level'])) {
+//                unset($managers[$k]);
+//            } else {
+                $managers[$k]['fio'] = $SITE->fioFormat($v['fio']);
+//            }
         }
 
         if (!empty($projects[0])) {
@@ -102,7 +105,7 @@ include('../top.php');?>
                         '</tr>';
                 }
 
-                $teach_fio  = $SITE->fioFormat($teachers[$v['teacher'] - 1]['fio']);
+                $teach_fio  = $SITE->fioFormat($teachers[$v['tid'] - 1]['fio']);
                 $client_fio = $SITE->fioFormat($clients[$v['clientid'] - 1]['fio']);
                 $debt = $v['cost'] - $v['payed'];
 
@@ -110,8 +113,8 @@ include('../top.php');?>
                     '<td><a href="/project/index.php?p='.$v['id'].'">[ред]</a></td>'.
                     '<td class="date">'.date('d.m.y', strtotime($v['date'])) .'</td>'.
                     '<td>'.$v['number'].'</td>'.
-                    '<td>'.$filials[$v['filial'] - 1]['name'].'</td>'.
-                    '<td>'.$managers[$v['manager'] - 1]['fio'].'</td>'.
+                    '<td>'.$filials[$v['fid'] - 1]['name'].'</td>'.
+                    '<td>'.$managers[$v['mid'] - 1]['fio'].'</td>'.
                     '<td>'.$teach_fio.'</td>'.
                     '<td>'.$client_fio.'</td>'.
                     '<td>'.$v['cost'].'</td>'.

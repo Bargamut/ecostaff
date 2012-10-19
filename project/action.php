@@ -40,6 +40,8 @@ if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btn
                     $client[0]['id'] = mysql_insert_id();
                 }
 
+                $pays = (!empty($_POST['pay'])) ? array_merge((array)$_POST['oldpays'], (array)$_POST['pay']) : (array)$_POST['oldpays'];
+
                 $proj_params = array(
                     $client[0]['id'],
                     $_POST['filial'],
@@ -52,19 +54,19 @@ if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btn
                     $_POST['teacher'],
                     $_POST['wagerate'],
                     $_POST['cost'],
-                    $ECON->payed($_POST['pay']),
+                    $ECON->payed($pays),
                     $_POST['manager'],
                     $SITE->dateFormat($_POST['date'], 'Y-m-d')
                 );
 
-                $query_fields = '`clientid`, `filial`, `number`, `hours`, `hours2`, `form`, `programm`, `payvariant`, `teacher`, `wagerate`, `cost`, `payed`, `manager`, `date`';
+                $query_fields = '`clientid`, `fid`, `number`, `hours`, `hours2`, `form`, `programm`, `payvariant`, `tid`, `wagerate`, `cost`, `payed`, `mid`, `date`';
                 $DB->db_query('INSERT INTO projects (' . $query_fields . ') VALUES (%d, %d, %d, %d, %d, %d, %s, %d, %d, %d, %d, %d, %d, %s)', $proj_params);
                 $_POST['pid'] = mysql_insert_id();
-                $ECON->makePay($_POST['pid'], $_POST['pay']);
+                $ECON->makePay($_POST['pid'], $_POST['manager'], $_POST['pay'], $_POST['payvariant']);
                 $ECON->countHours($_POST['pid'], $_POST['teacher'], $_POST['oldhours2'], $_POST['hours2'], $_POST['wagerate']);
                 break;
             case 'update':
-                $client = $DB->db_query('SELECT `id` FROM clients WHERE `fio`=%s', [$_POST['fio']]);
+                $client = $DB->db_query('SELECT `id` FROM clients WHERE `email`=%s', [$_POST['email']]);
                 if (count($client) == 0) {
                     $client_params = array(
                         $_POST['fio'],
@@ -85,8 +87,10 @@ if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btn
 
                 if ($_POST['return'] > 0) { $_POST['status'] = 4; }
 
+                $pays = (!empty($_POST['pay'])) ? array_merge((array)$_POST['oldpays'], (array)$_POST['pay']) : (array)$_POST['oldpays'];
+
                 $proj_params = array(
-                    $ECON->payed($_POST['pay']),
+                    $ECON->payed($pays),
                     $_POST['hours2'],
                     $_POST['programm'],
                     $_POST['teacher'],
@@ -95,14 +99,28 @@ if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btn
                     $_POST['return'],
                     $_POST['number']
                 );
-                $query_fields = '`payed`=%d, `hours2`=%d, `programm`=%s, `teacher`=%d, `wagerate`=%d, `status`=%d, `return`=%d';
+                $query_fields = '`payed`=%d, `hours2`=%d, `programm`=%s, `tid`=%d, `wagerate`=%d, `status`=%d, `return`=%d';
                 $DB->db_query('UPDATE projects SET ' . $query_fields . ' WHERE `number`=%d', $proj_params);
-                $ECON->makePay($_POST['pid'], $_POST['pay']);
+                $ECON->makePay($_POST['pid'], $_POST['manager'], $_POST['pay'], $_POST['payvariant']);
                 $ECON->countHours($_POST['pid'], $_POST['teacher'], $_POST['oldhours2'], $_POST['hours2'], $_POST['wagerate']);
                 break;
             case 'close':
-                $DB->db_query('UPDATE projects SET `payed`=%d, `status`=%d WHERE `number`=%d', [$ECON->payed($_POST['pay']), 4, $_POST['number']]);
-                $ECON->makePay($_POST['pid'], $_POST['pay']);
+                $pays = (!empty($_POST['pay'])) ? array_merge((array)$_POST['oldpays'], (array)$_POST['pay']) : (array)$_POST['oldpays'];
+
+                $proj_params = array(
+                    $ECON->payed($pays),
+                    $_POST['hours2'],
+                    $_POST['programm'],
+                    $_POST['teacher'],
+                    $_POST['wagerate'],
+                    4,
+                    $_POST['return'],
+                    $_POST['number']
+                );
+                $query_fields = '`payed`=%d, `hours2`=%d, `programm`=%s, `tid`=%d, `wagerate`=%d, `status`=%d, `return`=%d';
+
+                $DB->db_query('UPDATE projects SET ' . $query_fields . ' WHERE `number`=%d', $proj_params);
+                $ECON->makePay($_POST['pid'], $_POST['manager'], $_POST['pay'], $_POST['payvariant']);
                 $ECON->countHours($_POST['pid'], $_POST['teacher'], $_POST['oldhours2'], $_POST['hours2'], $_POST['wagerate']);
                 break;
             default: break;
