@@ -18,8 +18,8 @@ ul li a { color: #3B3B3B; text-decoration: none; }
 
 .btnNewProject { border: 1px #95E585 solid; background-color: #C5F6B0; }
 .btnNewProject:hover { border: 1px #9FF18F solid; background-color: #CDFFB7; }
-.btnProjects { border: 1px #A8A9CF solid; background-color: #D3D6E2; }
-.btnProjects:hover { border: 1px #AEAFD7 solid; background-color: #DCDDF0; }
+.btnProjects { border: 1px #F0F2AC solid; background-color: #FBFDB4; }
+.btnProjects:hover { border: 1px #F9FBB5 solid; background-color: #FDFFC7; }
 .btnNewStaff { border: 1px #D3A558 solid; background-color: #F0BD63; }
 .btnNewStaff:hover { border: 1px #FFC869 solid; background-color: #F0CE77; }
 .btnTeachers { border: 1px #A8A9CF solid; background-color: #D3D6E2; }
@@ -28,3 +28,9 @@ ul li a { color: #3B3B3B; text-decoration: none; }
 .btnStaff:hover { border: 1px #D3D597 solid; background-color: #E5E8B8; }
 .btnRates { border: 1px #D4A985 solid; background-color: #DFC3A1; }
 .btnRates:hover { border: 1px #E3B68F solid; background-color: #E4C6A8; }
+.btnSalTeachers { border: 1px #D1B8CD solid; background-color: #E4CBE0; }
+.btnSalTeachers:hover { border: 1px #E2C8DE solid; background-color: #EFD6EB; }
+/*.btnSalAdministrative { border: 1px #C1DEC6 solid; background-color: #D1EED6; }*/
+/*.btnSalAdministrative:hover { border: 1px #CFEED6 solid; background-color: #D8F5DD; }*/
+.btnSalAdministrative { color: #929292; border: 1px #ddd solid; background-color: #eee; }
+.btnSalAdministrative:hover { border: 1px #ddd solid; background-color: #eee; cursor: default; }

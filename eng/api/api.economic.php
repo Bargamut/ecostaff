@@ -15,7 +15,7 @@ class Economic {
     function countHours($pid, $tid, $oh, $h, $w) {
         if ($oh < $h) {
             $dh = $h - $oh;
-            $vals = [$tid, $pid, $dh, $w, date('Y-m-d')];
+            $vals = array($tid, $pid, $dh, $w, date('Y-m-d'));
             $this->DB->db_query('INSERT INTO teachers_hours (`tid`, `pid`, `hours`, `wagerate`, `date`) VALUES (%d, %d, %d, %d, %s)', $vals);
         }
     }

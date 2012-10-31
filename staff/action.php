@@ -53,7 +53,7 @@ if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btn
             case 'update':
                 switch ($_POST['lvl']) {
                     case 'T':
-                        $teacher = $DB->db_query('SELECT `id` FROM teachers WHERE `id`=%d', [$_POST['id']]);
+                        $teacher = $DB->db_query('SELECT `id` FROM teachers WHERE `id`=%d', $_POST['id']);
                         if (count($teacher) == 1) {
                             $staff_params = array(
                                 $_POST['fio'],

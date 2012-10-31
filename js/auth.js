@@ -1,26 +1,31 @@
 /**
- * Created with JetBrains PhpStorm.
  * User: Bargamut
  * Date: 14.07.12
  * Time: 4:08
  */
 $(function() {
     // Для страницы авторизации
-    $('#aEmail, #aPass').focus(function() { $(this).val() == 'E-Mail' || $(this).val() == 'Пароль' ? $(this).val('') : null; });
-    $('#aEmail').blur(function() { $(this).val() == '' ? $(this).val('E-Mail') : null; });
-    $('#aPass').blur(function() { $(this).val() == '' ? $(this).val('Пароль') : null; });
+    $('#login, #pass').focus(function() {
+        if ($(this).val() == 'Логин' || $(this).val() == 'Пароль') { $(this).val(''); }
+    });
+    $('#login').blur(function() {
+        if ($(this).val() == '') { $(this).val('Логин'); }
+    });
+    $('#pass').blur(function() {
+        if ($(this).val() == '') { $(this).val('Пароль'); }
+    });
 
     // Для миниавторизации
     $('#maEmail, #maPass').focus(function() {
-        $(this).val() == 'E-Mail' || $(this).val() == 'Пароль' ? $(this).val('') : null;
+        if ($(this).val() == 'E-Mail' || $(this).val() == 'Пароль') { $(this).val(''); }
         deform($(this), '+');
     });
     $('#maEmail').blur(function() {
-        $(this).val() == '' ? $(this).val('E-Mail') : null;
+        if ($(this).val() == '') { $(this).val('E-Mail'); }
         deform($(this), '-');
     });
     $('#maPass').blur(function() {
-        $(this).val() == '' ? $(this).val('Пароль') : null;
+        if ($(this).val() == '') { $(this).val('Пароль'); }
         deform($(this), '-');
     });
 });

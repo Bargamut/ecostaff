@@ -130,7 +130,7 @@ include('../top.php');?>
             $p_result .= '</table>';
         } else { $p_result = 'Не найдено ни одного проекта!'; }
 
-        $p_returns = array(0 => ['id' => 1, 'name' => 'Есть'], 1 => ['id' => 2, 'name' => 'Нет']);
+        $p_returns = array(0 => array('id' => 1, 'name' => 'Есть'), 1 => array('id' => 2, 'name' => 'Нет'));
         $p_debts = $p_returns;
 
         $p_form         = '<option value="0">Все</option>' . tplSelect($p_forms, $_GET['form'], 'name');

@@ -1,4 +1,4 @@
-<?php include('top.php');?>
+<?php include_once('top.php');?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,11 +25,13 @@
     <div class="content">
         <ul class="tools">
             <li class="btnNewProject"><a href="/project/index.php">Создать проект</a></li>
-            <li class="btnProjects"><a href="/report/projects.php">Текущие проекты</a></li>
             <li class="btnNewStaff"><a href="/staff/">Новый сотрудник</a></li>
             <li class="btnTeachers"><a href="/report/teachers.php">База преподавателей</a></li>
+            <li class="btnProjects"><a href="/report/projects.php">Текущие проекты</a></li>
             <li class="btnStaff"><a href="/report/staff.php">Персонал</a></li>
+            <li class="btnSalTeachers"><a href="/report/salary.php">з/п преподавателей</a></li>
             <li class="btnRates"><a href="/report/rates.php">Плановый показатель</a></li>
+            <li class="btnSalAdministrative">З/п администрации</li>
         </ul>
     </div>
     <div class="push"></div>
@@ -41,4 +43,4 @@
 </div>
 </body>
 </html>
-<?php include('bottom.php');?>
+<?php include_once('bottom.php');?>

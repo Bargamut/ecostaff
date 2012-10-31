@@ -14,10 +14,16 @@ class Database {
         $args = func_get_args();
         if (func_num_args() >= 1) {
             $q = array_shift($args); // Запрос
-            $p = array_shift($args); // Подставляемые параметры
+            if (count($args) == 1) {
+                $p = array_shift($args); // Подставляемые параметры
+            }
+
 
             // Если есть подставляемые параметры
             if (isset($p)){
+                if (!is_array($p)) {
+                    $p = array($p);
+                }
                 $q = $this->quoteSet($q);
 
                 foreach($p as $k => $v) {
@@ -31,14 +37,11 @@ class Database {
 
             $r = mysql_query($q) or die(mysql_error());
             $r = $this->db_make_result($r, $q);
-
-            if (!isset($r[0])) { $r = [$r]; }
         } else {
             $r = 'Нет нужных данных!';
         }
         return $r;
     }
-
     /**
      * Фкнкция квотирования
      * @param $q - запрос
@@ -47,43 +50,44 @@ class Database {
     private function quoteSet($q) {
         $q = preg_replace_callback(
             '/(%?)(%[sd])(:\w+)?(%?)/i',
-            function($m) { return $this->PregCallback($m); },
+            function($m) {
+                $r = ($m[2] == '%s' || ($m[2] == '%d' && $m[3] == ':like')) ?
+                    "'" . $m[1].$m[1].$m[2].$m[4].$m[4] . "'"
+                    :   $m[1].$m[1].$m[2].$m[4].$m[4];
+
+                return $r;
+            },
             $q);
         return $q;
     }
-    private function PregCallback($m) {
-        $r = ($m[2] == '%s' || ($m[2] == '%d' && $m[3] == ':like')) ?
-                "'" . $m[1].$m[1].$m[2].$m[4].$m[4] . "'"
-            :   $m[1].$m[1].$m[2].$m[4].$m[4];
-
-        return $r;
-    }
-
     /**
      * Функция форматирования строчных ресурсов
      * @param $str - строка
      * @return string - форматированная строка
      */
     private function strFormat($str) {
-        return htmlspecialchars(mysql_real_escape_string($str));
+        $str = htmlspecialchars(mysql_real_escape_string($str));
+        return $str;
     }
 
+    /**
+     * Функция компоновки результата запроса
+     * @param $r - результат запроса
+     * @param $q - запрос
+     * @return array - возвращаемый массив
+     */
     private function db_make_result($r, $q) {
         $result = array();
         if (preg_match('/^SELECT/i', $q)) {
             if (mysql_num_rows($r) == 1) {
-                return mysql_fetch_assoc($r);
-            } else {
+                $result[] = mysql_fetch_assoc($r);
+            } else if (mysql_num_rows($r) > 1) {
                 while ($row = mysql_fetch_assoc($r)) {
                     $result[] = $row;
                 }
-                return $result;
             }
-        } else {
-            return $r;
         }
+        return $result;
     }
-//    function db_delete() {}
-//    function db_search() {}
 }
 ?>

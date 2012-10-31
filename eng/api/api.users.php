@@ -1,10 +1,4 @@
 <?php
-/**
- * User: Bargamut
- * Date: 15.07.12
- * Time: 22:46
- */
-
 class Users {
     private $DB = null;
     public function __construct($DB) {
@@ -32,9 +26,7 @@ class Users {
 
             $this->DB->db_query('INSERT INTO users_site (`email`, `login`, `password`, `salt`, `date_reg`, `date_lastvisit`, `uid`, `fid`, `level`) VALUES (%s, %s, %s, %s, %s, %s, %s, %d, %s)', $forUserSite);
             $this->DB->db_query('INSERT INTO users_bio (`fio`) VALUES (%s)', $forUserBio);
-//            if (mysql_query($db_query) or die(mysql_error())) {
-//                return $this->auth($subm, $post['rEmail'], $post['rPass']);
-//            }
+//            return $this->auth($subm, $post['rEmail'], $post['rPass']);
         } else {
 //            header('Location: http://'.$_SERVER['SERVER_NAME']);
         }
@@ -43,18 +35,20 @@ class Users {
     /**
      * Авторизация пользователя
      */
-    function auth($subm, $mail, $pass) {
+    function auth($subm, $login, $pass) {
         // Если был сабмит авторизации и все данные введены верно
-        if (!empty($subm) && $this->authCorrect($mail, $pass)) {
-            $user = $this->getUserInfo($mail);
+        if (!empty($subm) && $this->authCorrect($login, $pass)) {
+            $user = $this->getUserInfo($login);
             $user['UNAME'] = $user['fio'];
 
             // Устанавливаем coockie с данными пользователя
             setcookie ("UID",   $user['uid'],   time() + 50000, '/');
-            setcookie ("email", $user['email'], time() + 50000, '/');
+            setcookie ("login", $user['login'], time() + 50000, '/');
+
+            $forUserSite = array(date('Y-m-d H:i:s'), $login);
 
             // Меняем дату последнего посещения
-            $this->DB->db_query('UPDATE users_site SET `date_lastvisit`=%s WHERE `email`=%s LIMIT 1', [date('Y-m-d H:i:s'), $mail]);
+            $this->DB->db_query('UPDATE users_site SET `date_lastvisit` = %s WHERE `login` = %s LIMIT 1', $forUserSite);
             // И перенаправляем на главную
             header('Location: http://'.$_SERVER['SERVER_NAME']);
         } else {
@@ -71,9 +65,7 @@ class Users {
     function logout() {
         setcookie ("UID", '', time() - 50000, '/');
         setcookie ("email", '', time() - 50000, '/');
-
         session_destroy();
-
         header('Location: http://'.$_SERVER['SERVER_NAME']);
     }
 
@@ -108,6 +100,8 @@ class Users {
 
     function userTab($uname) {
         $res = file_get_contents(SITE_ROOT.'/tpl/userTab.html');
+        // TODO: добавить название филиала
+//        // $res = str_replace('{filial}',          $u['filial'], $res);
         $res = str_replace('{uname}',           $uname, $res);
         $res = str_replace('{AUTH_PROFILE}',    AUTH_PROFILE, $res);
         $res = str_replace('{AUTH_EXIT}',       AUTH_EXIT, $res);
@@ -162,9 +156,9 @@ class Users {
         foreach($post as $k => $v) { $sets[] = '`'.$k.'`="'.$v.'"'; }
         $sets = implode(',', $sets);
 
-        $result = $this->DB->db_query('SELECT `id` FROM users_site WHERE `uid`=%s LIMIT 1', $uid);
+        $result = $this->DB->db_query('SELECT `id` FROM users_site WHERE `uid` = %s LIMIT 1', $uid);
 
-        mysql_query('UPDATE '.$tbl.' SET '.$sets.' WHERE `id`="'.$result['id'].'" LIMIT 1') or die(mysql_error());
+        mysql_query('UPDATE '.$tbl.' SET '.$sets.' WHERE `id` = "'.$result['id'].'" LIMIT 1') or die(mysql_error());
         return true;
     }
 
@@ -178,7 +172,7 @@ class Users {
         $result = '';
         // не меньше ли 5 символов длина пароля
         if (strlen($pass) >= 5) {
-            $user = $this->DB->db_query('SELECT `password`, `salt` FROM users_site WHERE `email`=%s AND `block`="0" LIMIT 1', [$mail]);
+            $user = $this->DB->db_query('SELECT `password`, `salt` FROM users_site WHERE `email`=%s AND `block`="0" LIMIT 1', $mail);
             if (hash('sha512', hash('sha512', $pass).$user['salt']) != $user['password']) {
                     $result .= 'Невереная пара Логин/Пароль';
             }
@@ -190,22 +184,29 @@ class Users {
      * Функция проверки корректности введённых данных авторизации
      * @return bool
      */
-    private function authCorrect($mail, $pass) {
+    private function authCorrect($login, $pass) {
         $result = '';
 
-        if ($mail == "") $result .= 'Пустой E-Mail|';     // не пусто ли поле логина
-        if ($pass == "") $result .= 'Пустой пароль';      // не пусто ли поле пароля
-        // не меньше ли 5 символов длина пароля
-        if (strlen($pass) < 5 || empty($pass)) $result .= 'pass < 5|';
+        if ($login == '') {
+            $result .= 'Пустой E-Mail|';
+        }
+        if ($pass == '') {
+            $result .= 'Пустой пароль';
+        }
+        if (strlen($pass) < 5 || empty($pass)) {
+            $result .= 'pass < 5|';
+        }
 
-        $user = $this->DB->db_query('SELECT `password`, `salt` FROM users_site WHERE `email`=%s AND `block`="0" LIMIT 1', [$mail]);
+        $forUS = array($login, 0);
+        $user = $this->DB->db_query('SELECT `password`, `salt` FROM users_site WHERE `login`=%s AND `block`=%d LIMIT 1', $forUS);
 
         // проверка на существование в БД такого же логина
-        if (count($user) == 0) $result .= 'Такого пользователя нет';
-
-        if (hash('sha512', hash('sha512', $pass).$user['salt']) != $user['password']) $result .= 'Невереная пара Логин/Пароль';
-
-        return ($result == ''); // если выполнение функции дошло до этого места, возвращаем true
+        if (empty($user[0])) {
+            $result .= 'Такого пользователя нет';
+        } else if (hash('sha512', hash('sha512', $pass).$user[0]['salt']) != $user[0]['password']) {
+            $result .= 'Невереная пара Логин/Пароль';
+        }
+        return ($result == '');
     }
 
     /**
@@ -216,17 +217,35 @@ class Users {
         $result = '';
         $reg_email = '/^([a-z0-9])(\w|[.]|-|_)+([a-z0-9])@([a-z0-9])([a-z0-9.-]*)([a-z0-9])([.]{1})([a-z]{2,4})$/is';
 
-        if ($_POST['login'] == "") $result = 'login|';      // не пусто ли поле логина
-        if ($_POST['email'] == "") $result = 'email|';      // не пусто ли поле почты
-        if ($_POST['filial'] == "") $result = 'filial|';    // не пусто ли поле филиала
-        if ($_POST['pass'] == "") $result = 'pass|';        // не пусто ли поле пароля
-        if ($_POST['pass2'] == "") $result = 'pass2|';      // не пусто ли поле подтверждения пароля
-        if (!preg_match($reg_email, $_POST['email'])) $result = 'preg_email|'; // соответствует ли поле e-mail регулярному выражению
-        if (strlen($_POST['pass']) < 5 && empty($_POST['pass'])) $result = 'pass < 5|'; // не меньше ли 5 символов длина пароля
-        if (hash('sha512', $_POST['pass']) != hash('sha512', $_POST['pass2'])) $result = 'not_confirm_pass|'; // равен ли пароль его подтверждению
+        if ($_POST['login'] == "") {
+            $result .= 'login|';
+        }
+        if ($_POST['email'] == "") {
+            $result .= 'email|';
+        }
+        if ($_POST['filial'] == "") {
+            $result .= 'filial|';
+        }
+        if ($_POST['pass'] == "") {
+            $result .= 'pass|';
+        }
+        if ($_POST['pass2'] == "") {
+            $result .= 'pass2|';
+        }
+        if (!preg_match($reg_email, $_POST['email'])) {
+            $result .= 'preg_email|';
+        }
+        if (strlen($_POST['pass']) < 5 && empty($_POST['pass'])) {
+            $result .= 'pass < 5|';
+        }
+        if (hash('sha512', $_POST['pass']) != hash('sha512', $_POST['pass2'])) {
+            $result .= 'not_confirm_pass|';
+        }
 
-        $rez = $this->DB->db_query('SELECT * FROM users_site WHERE `login`=%s LIMIT 1', [$_POST['login']]);
-        if (count($rez[0]) != 0) $result = 'already_exist|'; // проверка на существование в БД такого же логина
+        $rez = $this->DB->db_query('SELECT `date` FROM users_site WHERE `login` = %s LIMIT 1', $_POST['login']);
+        if (!empty($rez[0])) {
+            $result .= 'already_exist|';
+        }
 
         return ($result == ''); // если выполнение функции дошло до этого места, возвращаем true
     }
@@ -234,12 +253,12 @@ class Users {
     /**
      * Функция запроса данных пользователя
      */
-    private function getUserInfo($mail) {
-        $us = $this->DB->db_query('SELECT `id`, `email`, `uid`, `date_reg`, `date_lastvisit`, `level`, `fid`, `block`, `block_reason` FROM users_site WHERE `email`=%s LIMIT 1', [$mail]);
-        $ub = $this->DB->db_query('SELECT `fio` FROM users_bio WHERE `id` = %d LIMIT 1', [$us['id']]);
-        $ul = $this->DB->db_query('SELECT `rights`, `lvlname` FROM users_lvl WHERE `lvl` = %s LIMIT 1', [$us['level']]);
+    private function getUserInfo($login) {
+        $us = $this->DB->db_query('SELECT `id`, `email`, `login`, `uid`, `date_reg`, `date_lastvisit`, `level`, `fid`, `block`, `block_reason` FROM users_site WHERE `login`=%s LIMIT 1', $login);
+        $ub = $this->DB->db_query('SELECT `fio` FROM users_bio WHERE `id` = %d LIMIT 1', $us[0]['id']);
+        $ul = $this->DB->db_query('SELECT `rights`, `lvlname` FROM users_lvl WHERE `lvl` = %s LIMIT 1', $us[0]['level']);
 
-        $user = array_merge($us, $ub, $ul);
+        $user = array_merge($us[0], $ub[0], $ul[0]);
         return $user;
     }
 
@@ -247,9 +266,9 @@ class Users {
      * Функция запроса данных профиля, кроме гостевого
      */
     private function getProfileInfo($mail) {
-        $us = $this->DB->db_query('SELECT `id`, `email`, `uid`, `level`, `fid`, `block`, `block_reason` FROM users_site WHERE `email`=%s AND `level` != "G" LIMIT 1', [$mail]);
-        $ub = $this->DB->db_query('SELECT `fio`, `birthday` FROM users_bio WHERE `id`=%d LIMIT 1', [$us['id']]);
-        $ul = $this->DB->db_query('SELECT `lvlname` FROM users_lvl WHERE `lvl`=%s LIMIT 1', [$us['level']]);
+        $us = $this->DB->db_query('SELECT `id`, `email`, `uid`, `level`, `fid`, `block`, `block_reason` FROM users_site WHERE `email`=%s AND `level` != "G" LIMIT 1', $mail);
+        $ub = $this->DB->db_query('SELECT `fio`, `birthday` FROM users_bio WHERE `id`=%d LIMIT 1', $us['id']);
+        $ul = $this->DB->db_query('SELECT `lvlname` FROM users_lvl WHERE `lvl`=%s LIMIT 1', $us['level']);
 
         $profile = array_merge($us, $ub, $ul);
         return $profile;
@@ -260,8 +279,8 @@ class Users {
      * @return array
      */
     private function getProfilesInfo() {
-        $us = $this->DB->db_query('SELECT `id`, `block` FROM users_site ORDER BY `id`', ['']);
-        $ub = $this->DB->db_query('SELECT `fio` FROM users_bio ORDER BY `id`', ['']);
+        $us = $this->DB->db_query('SELECT `id`, `block` FROM users_site ORDER BY `id`');
+        $ub = $this->DB->db_query('SELECT `fio` FROM users_bio ORDER BY `id`');
 
         $profiles = array();
         $profiles[$us['id']] = array_merge($us, $ub);
@@ -277,7 +296,7 @@ class Users {
         $r = array();
 
         $arr = explode(', ', $rights);
-        foreach($arr as $k => $val) {
+        foreach($arr as $val) {
             $a = explode(':', $val);
             $r[$a[0]] = $a[1];
         }

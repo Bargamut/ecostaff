@@ -1,10 +1,4 @@
 <?php
-/**
- * User: Bargamut
- * Date: 04.08.12
- * Time: 17:25
- */
-
 class Site{
     public $err = array();
     /**

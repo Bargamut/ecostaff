@@ -50,16 +50,16 @@ include('../top.php');?>
             $edit_tpl = file_get_contents(SITE_ROOT.'/tpl/forms/staffForm.html');
 
             if ($_GET['m'] == 't') {
-                $teacher    = $DB->db_query('SELECT * FROM teachers WHERE `id`=%d LIMIT 1',     [$_GET['s']]);
+                $teacher    = $DB->db_query('SELECT * FROM teachers WHERE `id`=%d LIMIT 1',     $_GET['s']);
             } else {
-                $user       = $DB->db_query('SELECT * FROM users_bio WHERE `id`=%d LIMIT 1',    [$_GET['s']]);
-                $account    = $DB->db_query('SELECT * FROM users_site WHERE `id`=%d LIMIT 1',   [$_GET['s']]);
+                $user       = $DB->db_query('SELECT * FROM users_bio WHERE `id`=%d LIMIT 1',    $_GET['s']);
+                $account    = $DB->db_query('SELECT * FROM users_site WHERE `id`=%d LIMIT 1',   $_GET['s']);
             }
-            $languages  = $DB->db_query('SELECT * FROM languages',  ['']);
-            $stations   = $DB->db_query('SELECT * FROM stations',   ['']);
-            $grades     = $DB->db_query('SELECT * FROM teachers_grades',    ['']);
-            $filials    = $DB->db_query('SELECT `id`, `name` FROM filial',  ['']);
-            $lvls       = $DB->db_query('SELECT `lvl`, `lvlname` FROM users_lvl ORDER BY `id` DESC', ['']);
+            $languages  = $DB->db_query('SELECT * FROM languages');
+            $stations   = $DB->db_query('SELECT * FROM stations');
+            $grades     = $DB->db_query('SELECT * FROM teachers_grades');
+            $filials    = $DB->db_query('SELECT `id`, `name` FROM filial');
+            $lvls       = $DB->db_query('SELECT `lvl`, `lvlname` FROM users_lvl ORDER BY `id` DESC');
 
             $fio        = $teacher[0]['fio']   ? $teacher[0]['fio']   : $user[0]['fio'];
             $email      = $teacher[0]['email'] ? $teacher[0]['email'] : $account[0]['email'];

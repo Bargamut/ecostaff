@@ -41,7 +41,7 @@
         $t_grades       = $DB->db_query('SELECT * FROM teachers_grades ORDER BY `id`');
         $stations       = $DB->db_query('SELECT * FROM stations ORDER BY `id`');
 
-        unset($teachers[0]);
+//        unset($teachers[0]);
         $teachers = array_values($teachers);
 
         $t_result = '<table border="0" cellspadding="0" cellspacing="0">';

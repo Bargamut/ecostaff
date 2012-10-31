@@ -41,7 +41,7 @@ include('../top.php');?>
          */
         function tplSelect($needle, $key, $ind) {
             $r = '';
-            foreach ($needle as $k => $v) {
+            foreach($needle as $v) {
                 $s = $v['id'] == $key ? 'selected' : '';
                 $r .= '<option '.$s.' value="'.$v['id'].'">'.$v[$ind].'</option>';
             }
@@ -51,8 +51,11 @@ include('../top.php');?>
         $where = array();
         $vals = array();
 
-        if (!empty($_GET['datebeg']))   { $where[] = '`date` >= %s'; $vals['datebeg'] = $_GET['datebeg']; }
-        if (!empty($_GET['dateend']))   { $where[] = '`date` <= %s'; $vals['dateend'] = $_GET['dateend']; }
+        $where[] = '`date` >= %s';
+        $where[] = '`date` <= %s';
+
+        $vals['datebeg'] = (!empty($_GET['datebeg'])) ? $_GET['datebeg'] : date('Y-m-t', strtotime('last month'));
+        $vals['dateend'] = (!empty($_GET['dateend'])) ? $_GET['dateend'] : date('Y-m-d');
         if (!empty($_GET['payvariant'])){ $where[] = '`payvariant` = %d'; $vals['payvariant'] = $_GET['payvariant']; }
         if (!empty($_GET['manager']))   { $where[] = '`mid` = %d'; $vals['manager'] = $_GET['manager']; }
 
@@ -61,8 +64,8 @@ include('../top.php');?>
         $p_pays         = $DB->db_query('SELECT `pid`, `pay` FROM projects_pays ' . $where . ' ORDER BY `date` DESC', $vals);
 
         $pays = array();
-        $p_keys = array('val' => [], 'type' => []);
-        foreach($p_pays as $k => $v) {
+        $p_keys = array('val' => array(), 'type' => array());
+        foreach($p_pays as $v) {
             $pays[] = $v['pay'];
             if (!in_array($v['pid'], $p_keys['val'])) {
                 $p_keys['type'][] = '%d';
@@ -70,19 +73,21 @@ include('../top.php');?>
             }
         }
 
-        $where = [count($p_keys['type']) > 1 ? '`id` IN (' . implode(',', $p_keys['type']) . ')' : '`id` = %d'];
-        $where = count($where) > 0 ? 'WHERE ' . implode(' AND ', $where) : '';
-
-        $projects       = $DB->db_query('SELECT * FROM projects ' . $where . ' ORDER BY `date` DESC', $p_keys['val']);
-
-        $p_forms        = $DB->db_query('SELECT * FROM projects_form ORDER BY `id`');
         $p_payvariants  = $DB->db_query('SELECT * FROM projects_payvariants ORDER BY `id`');
-        $p_status       = $DB->db_query('SELECT * FROM projects_status ORDER BY `id`');
-
-        $clients        = $DB->db_query('SELECT * FROM clients');
         $managers       = $DB->db_query('SELECT ub.`id`, ub.`fio`, us.`level` FROM users_bio AS ub LEFT JOIN users_site AS us ON ub.`id` = us.`id` ORDER BY ub.`id`');
 
-        if (!empty($projects[0])) {
+        if (!empty($p_keys['type']) && !empty($p_keys['val'])) {
+            $typeIn = count($p_keys['type']) > 1 ? '`id` IN (' . implode(',', $p_keys['type']) . ')' : '`id` = %d';
+            $where = array($typeIn);
+            $where = count($where) > 0 ? 'WHERE ' . implode(' AND ', $where) : '';
+
+            $projects       = $DB->db_query('SELECT * FROM projects ' . $where . ' ORDER BY `date` DESC', $p_keys['val']);
+
+            $p_forms        = $DB->db_query('SELECT * FROM projects_form ORDER BY `id`');
+            $p_status       = $DB->db_query('SELECT * FROM projects_status ORDER BY `id`');
+
+            $clients        = $DB->db_query('SELECT * FROM clients');
+
             $result = '<table border="0" cellspadding="0" cellspacing="0">';
 
             foreach ($projects as $k => $v) {
@@ -114,22 +119,26 @@ include('../top.php');?>
                     '</tr>';
             }
 
-            $result .= '</table>';
+            $result .= '</table>'.
+                '<div class="salary">';
+
             if (isset($_GET['manager'])) {
                 foreach($managers as $mk => $mv) {
                     if ($mv['id'] == $_GET['manager']) {
                         switch ($mv['level']) {
                             case 'M': break;
-                            case 'MP': $result .= 'Итого: '.$ECON->salManager($pays); break;
-                            case 'MF': $result .= 'Итого: '.$ECON->salBigManager($pays); break;
-                            case 'AF': $result .= 'Итого: '.$ECON->salFilialDirector($pays); break;
-                            case 'AI': $result .= 'Итого: '.$ECON->salInitDirector($pays); break;
+                            case 'MP': $result .= 'Итого: <b>' . $ECON->salManager($pays) . 'р.</b>'; break;
+                            case 'MF': $result .= 'Итого: <b>' . $ECON->salBigManager($pays) . 'р.</b>'; break;
+                            case 'AF': $result .= 'Итого: <b>' . $ECON->salFilialDirector($pays) . 'р.</b>'; break;
+                            case 'AI': $result .= 'Итого: <b>' . $ECON->salInitDirector($pays) . 'р.</b>'; break;
                             case 'A': break;
                             default: break;
                         }
                     }
                 }
             }
+
+            $result .= '</div>';
         } else { $result = 'Не найдено ни одного проекта!'; }
 
             $p_payvariant   = '<option value="0">Все</option>' . tplSelect($p_payvariants, $_GET['payvariant'], 'name');

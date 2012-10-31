@@ -1,11 +1,4 @@
-<?php
-/**
- * Created by JetBrains PhpStorm.
- * User: Bargamut
- * Date: 02.07.12
- * Time: 3:55
- */
-include_once('../top.php');
+<?php include_once('../top.php');
 
-$_SESSION['USER'] = $USER->auth($_POST['authSubm'], $_POST['email'], $_POST['pass']);
+$_SESSION['USER'] = $USER->auth($_POST['authSubm'], $_POST['login'], $_POST['pass']);
 ?>

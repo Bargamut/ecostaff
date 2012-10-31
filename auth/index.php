@@ -23,11 +23,10 @@
     <?php if (!$userinfo['logined']) {?>
         <form id="fAuth" name="fAuth" action="/auth/action.php" method="post" enctype="multipart/form-data">
             <h2><?=AUTH_CAPTION?></h2>
-            <input id="email" name="email" type="text" value="<?=AUTH_EMAIL?>" />
+            <input id="login" name="login" type="text" value="<?=AUTH_LOGIN?>" />
             <input id="pass" name="pass" type="password" value="<?=AUTH_PASSWORD?>" />
 
             <input id="authSubm" name="authSubm" class="button" type="submit" value="<?=AUTH_SUBMIT?>"><br />
-            <a href="/registration/">Регистрация</a>
         </form>
     <?php } else { ?>
         <div class="error">

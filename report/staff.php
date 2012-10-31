@@ -26,8 +26,8 @@
         function arrayAttr($mainarr, $needle) {
             $arr = array();
             $needle = explode(',', $needle);
-            foreach ($mainarr as $kl => $vl) {
-                foreach ($needle as $kvl => $vvl) {
+            foreach ($mainarr as $vl) {
+                foreach ($needle as $vvl) {
                     if ($vl['id'] == $vvl) {
                         $arr[] = $vl['name'];
                     }
@@ -49,7 +49,7 @@
                     '</tr>';
             }
 
-            foreach ($lvls as $kl => $vl) {
+            foreach ($lvls as $vl) {
                 if ($vl['lvl'] == $v['level']) { $v['lvlname'] = $vl['lvlname']; }
             }
 

@@ -72,19 +72,22 @@ include('../top.php');?>
                 return $res;
             }
 
-            $project        = $DB->db_query('SELECT * FROM projects WHERE `id`=%d LIMIT 1', [$_GET['p']]);
-            $p_pays         = $DB->db_query('SELECT `pay`, `date` FROM projects_pays WHERE `pid`=%d ORDER BY `id` LIMIT 4', [$project[0]['id']]);
-            $client         = $DB->db_query('SELECT * FROM clients WHERE `id`=%d LIMIT 1', [$project[0]['clientid']]);
-            $p_payvariants  = $DB->db_query('SELECT * FROM projects_payvariants',   ['']);
-            $p_status       = $DB->db_query('SELECT * FROM projects_status',        ['']);
-            $managers       = $DB->db_query('SELECT `id`, `fio` FROM users_bio',    ['']);
-            $teachers       = $DB->db_query('SELECT `id`, `fio` FROM teachers',     ['']);
-            $filials        = $DB->db_query('SELECT * FROM filial',         ['']);
-            $p_forms        = $DB->db_query('SELECT * FROM projects_form',  ['']);
+            if (!empty($_GET['p'])) {
+                $project        = $DB->db_query('SELECT * FROM projects WHERE `id`=%d LIMIT 1', $_GET['p']);
+                $p_pays         = $DB->db_query('SELECT `pay`, `date` FROM projects_pays WHERE `pid`=%d ORDER BY `id` LIMIT 4', $project[0]['id']);
+                $client         = $DB->db_query('SELECT * FROM clients WHERE `id`=%d LIMIT 1', $project[0]['clientid']);
 
-            $pays = setPays($p_pays);
+                $pays = setPays($p_pays);
+            }
 
-            $teachers       = tplSelect($teachers,      $project[0]['tid'],         'fio');
+            $p_payvariants  = $DB->db_query('SELECT * FROM projects_payvariants');
+            $p_status       = $DB->db_query('SELECT * FROM projects_status');
+            $managers       = $DB->db_query('SELECT `id`, `fio` FROM users_bio');
+            $teachers       = $DB->db_query('SELECT `id`, `fio` FROM teachers');
+            $filials        = $DB->db_query('SELECT * FROM filial');
+            $p_forms        = $DB->db_query('SELECT * FROM projects_form');
+
+            $teachers       = '<option value="0">В ожидании</option>' . tplSelect($teachers,      $project[0]['tid'],         'fio');
             $filials        = tplSelect($filials,       $project[0]['fid'],         'name');
             $p_forms        = tplSelect($p_forms,       $project[0]['form'],        'name');
             $managers       = tplSelect($managers,      $project[0]['mid'],         'fio');

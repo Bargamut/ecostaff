@@ -1,13 +1,5 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: Bargamut
- * Date: 02.07.12
- * Time: 3:28
- */
-
-define('SITE_TITLE' ,   'EcoStaff');
-
+define("SITE_TITLE", 'EcoStaff');
 define('DEBUG'      ,   'Сайт на реконструкции, скоро вернёмся!');
 
 define('CREDITS'    ,   'EcoStaff<br />&copy; 2008 - ' . date('Y'));

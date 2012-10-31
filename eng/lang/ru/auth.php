@@ -7,6 +7,7 @@
 
 define('AUTH_CAPTION'       , 'Вход');
 define('AUTH_EMAIL'         , 'E-Mail');
+define('AUTH_LOGIN'         , 'Логин');
 define('AUTH_PASSWORD'      , 'Пароль');
 define('AUTH_PROFILE'       , 'Профиль');
 define('AUTH_SUBMIT'        , 'Войти');

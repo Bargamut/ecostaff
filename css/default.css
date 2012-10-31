@@ -36,9 +36,8 @@ hr {
     margin: 0px 0px -70px;
 }
 
-.header { position: relative; height: 190px; background-image: url('/img/default/logo_bg.jpg'); margin-bottom: 5px; }
-.logo1, .logo2 { border: 0px; }
-.logo2 { float: right;}
+.header { position: relative; height: 190px; background: url('/img/default/logo2.png') no-repeat top right; margin-bottom: 5px; }
+.logo1 { border: 0px; }
 .usertab { height: 30px; padding: 5px 10px; text-align: right; }
 .content { padding: 5px 10px 15px; }
 

@@ -27,7 +27,7 @@ if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btn
         if (!empty($_POST['btnClose'])) { $type = 'close'; }
         switch ($type) {
             case 'create':
-                $client = $DB->db_query('SELECT `id` FROM clients WHERE `email`=%s', [$_POST['email']]);
+                $client = $DB->db_query('SELECT `id` FROM clients WHERE `email`=%s', $_POST['email']);
                 if (count($client[0]) == 0) {
                     $client_params = array(
                         $_POST['fio'],
@@ -66,7 +66,7 @@ if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btn
                 $ECON->countHours($_POST['pid'], $_POST['teacher'], $_POST['oldhours2'], $_POST['hours2'], $_POST['wagerate']);
                 break;
             case 'update':
-                $client = $DB->db_query('SELECT `id` FROM clients WHERE `email`=%s', [$_POST['email']]);
+                $client = $DB->db_query('SELECT `id` FROM clients WHERE `email`=%s', $_POST['email']);
                 if (count($client) == 0) {
                     $client_params = array(
                         $_POST['fio'],
@@ -82,7 +82,7 @@ if (!empty($_POST['btnSubm']) || !empty($_POST['btnEdit']) || !empty($_POST['btn
                         $_POST['note'],
                         $client['id']
                     );
-                    $DB->db_query('UPDATE clients SET `note`=%s WHERE `id`=%d LIMIT 1', $client_params);
+                    $DB->db_query('UPDATE clients SET `note` = %s WHERE `id` = %d LIMIT 1', $client_params);
                 }
 
                 if ($_POST['return'] > 0) { $_POST['status'] = 4; }

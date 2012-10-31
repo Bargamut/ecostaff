@@ -62,7 +62,7 @@ include('../top.php');?>
             $managers[$k]['fio'] = $SITE->fioFormat($v['fio']);
         }
 
-        unset($teachers[0]);
+//        unset($teachers[0]);
         $teachers = array_values($teachers);
 
         if (!empty($teachers[0])) {
@@ -79,9 +79,13 @@ include('../top.php');?>
                 $where = array();
                 $vals = array();
 
-                if (!empty($_GET['datebeg']))   { $where[] = '`date` >= %s'; $vals['datebeg'] = $_GET['datebeg']; }
-                if (!empty($_GET['dateend']))   { $where[] = '`date` <= %s'; $vals['dateend'] = $_GET['dateend']; }
-                $where[] = '`tid`=%d'; $vals['tid'] = $v['id'];
+                $where[] = '`date` >= %s';
+                $where[] = '`date` <= %s';
+                $where[] = '`tid` = %d';
+
+                $vals['datebeg'] = (!empty($_GET['datebeg'])) ? $_GET['datebeg'] : date('Y-m-t', strtotime('last month'));
+                $vals['dateend'] = (!empty($_GET['dateend'])) ? $_GET['dateend'] : date('Y-m-d');
+                $vals['tid'] = $v['id'];
 
                 $where = count($where) > 0 ? 'WHERE ' . implode(' AND ', $where) : '';
                 $hours =   $DB->db_query('SELECT `hours`, `wagerate` FROM teachers_hours ' . $where . ' ORDER BY `id`', $vals);
@@ -102,7 +106,7 @@ include('../top.php');?>
             $p_result .= '</table>';
         } else { $p_result = 'Не найдено ни одного проекта!'; }
 
-        $p_returns = array(0 => ['id' => 1, 'name' => 'Есть'], 1 => ['id' => 2, 'name' => 'Нет']);
+        $p_returns = array(0 => array('id' => 1, 'name' => 'Есть'), 1 => array('id' => 2, 'name' => 'Нет'));
         $p_debts = $p_returns;
 
         $p_form         = '<option value="0">Все</option>' . tplSelect($p_forms, $_GET['form'], 'name');
