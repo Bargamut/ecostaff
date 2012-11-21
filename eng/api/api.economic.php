@@ -21,10 +21,11 @@ class Economic {
     }
 
     /**
-     * Запись платежей по проекту
+     * Запись платежей по проекту, если платёж > 0
      * @param $pid - ID проекта
      * @param $mid - ID менеджера
-     * @param $pays - платежи
+     * @param $pay - платежи
+     * @param #pvariant - вариант оплаты
      */
     function makePay($pid, $mid, $pay, $pvariant) {
         if (!empty($pay)) {

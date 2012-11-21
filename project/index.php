@@ -53,14 +53,14 @@ include('../top.php');?>
 
             function setPays($arrPays){
                 $res = '';
-                $label = 'при подписании договора';
+                $label = 'Платёж №1';//при подписании договора';
                 $n = 0;
 
                 if (!empty($arrPays[0])) {
                     foreach($arrPays as $k => $v) {
                         if ($v['date'] > '0000-00-00') {
                             $res .= '<li><label>' . $label . '</label><input class="payed" name="oldpays[]" type="text" value="' . $v['pay'] . '"></li>';
-                            $label = 'этап ' . ($k + 1);
+                            $label = 'Платёж №' . ($k + 2);
                             $n++;
                         }
                     }
@@ -73,21 +73,34 @@ include('../top.php');?>
             }
 
             if (!empty($_GET['p'])) {
-                $project        = $DB->db_query('SELECT * FROM projects WHERE `id`=%d LIMIT 1', $_GET['p']);
-                $p_pays         = $DB->db_query('SELECT `pay`, `date` FROM projects_pays WHERE `pid`=%d ORDER BY `id` LIMIT 4', $project[0]['id']);
-                $client         = $DB->db_query('SELECT * FROM clients WHERE `id`=%d LIMIT 1', $project[0]['clientid']);
+                $project = $DB->db_query('SELECT * FROM projects WHERE `id`=%d LIMIT 1', $_GET['p']);
+                $p_pays  = $DB->db_query('SELECT `pay`, `date` FROM projects_pays WHERE `pid`=%d ORDER BY `id` LIMIT 4', $project[0]['id']);
+
+                if ($project[0]['clientid'] > 0) {
+                    $client = $DB->db_query('SELECT * FROM clients WHERE `id`=%d LIMIT 1', $project[0]['clientid']);
+                } else if ($project[0]['groupid'] > 0) {
+                    $client = $DB->db_query('SELECT * FROM clients_groups WHERE `id`=%d LIMIT 1', $project[0]['groupid']);
+                    $clients = $DB->db_query('SELECT `fio` FROM clients WHERE `id` IN (%s:in) LIMIT 2', $client[0]['clients']);
+                }
 
                 $pays = setPays($p_pays);
             }
 
+            $c = '';
+            foreach ($clients as $v) {
+                $c .= $SITE->fioFormat($v['fio']).'<br />';
+            }
+
             $p_payvariants  = $DB->db_query('SELECT * FROM projects_payvariants');
             $p_status       = $DB->db_query('SELECT * FROM projects_status');
+            $c_groups       = $DB->db_query('SELECT * FROM clients_groups');
             $managers       = $DB->db_query('SELECT `id`, `fio` FROM users_bio');
             $teachers       = $DB->db_query('SELECT `id`, `fio` FROM teachers');
             $filials        = $DB->db_query('SELECT * FROM filial');
             $p_forms        = $DB->db_query('SELECT * FROM projects_form');
 
-            $teachers       = '<option value="0">В ожидании</option>' . tplSelect($teachers,      $project[0]['tid'],         'fio');
+            $c_groups       = '<option value="0"></option>' . tplSelect($c_groups,              $project[0]['groupid'], 'name');
+            $teachers       = '<option value="0">В ожидании</option>' . tplSelect($teachers,    $project[0]['tid'],     'fio');
             $filials        = tplSelect($filials,       $project[0]['fid'],         'name');
             $p_forms        = tplSelect($p_forms,       $project[0]['form'],        'name');
             $managers       = tplSelect($managers,      $project[0]['mid'],         'fio');
@@ -103,7 +116,10 @@ include('../top.php');?>
             $edit_tpl = str_replace('{status}',     $p_status,          $edit_tpl);
             $edit_tpl = str_replace('{manager}',    $managers,          $edit_tpl);
             $edit_tpl = str_replace('{teacher}',    $teachers,          $edit_tpl);
+            $edit_tpl = str_replace('{group}',      $c_groups,          $edit_tpl);
+            $edit_tpl = str_replace('{clients}',    $c,                 $edit_tpl);
             $edit_tpl = str_replace('{fio}',        $client[0]['fio'],     $edit_tpl);
+            $edit_tpl = str_replace('{name}',       $client[0]['name'],    $edit_tpl);
             $edit_tpl = str_replace('{phone}',      $client[0]['phone'],   $edit_tpl);
             $edit_tpl = str_replace('{email}',      $client[0]['email'],   $edit_tpl);
             $edit_tpl = str_replace('{note}',       $client[0]['note'],    $edit_tpl);

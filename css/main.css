@@ -34,3 +34,5 @@ ul li a { color: #3B3B3B; text-decoration: none; }
 /*.btnSalAdministrative:hover { border: 1px #CFEED6 solid; background-color: #D8F5DD; }*/
 .btnSalAdministrative { color: #929292; border: 1px #ddd solid; background-color: #eee; }
 .btnSalAdministrative:hover { border: 1px #ddd solid; background-color: #eee; cursor: default; }
+.btnFilials { border: 1px #F0F2AC solid; background-color: #FBFDB4; }
+.btnFilials:hover { border: 1px #F9FBB5 solid; background-color: #FDFFC7; }

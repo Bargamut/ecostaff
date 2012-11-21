@@ -32,6 +32,7 @@
             <li class="btnSalTeachers"><a href="/report/salary.php">з/п преподавателей</a></li>
             <li class="btnRates"><a href="/report/rates.php">Плановый показатель</a></li>
             <li class="btnSalAdministrative">З/п администрации</li>
+            <li class="btnFilials"><a href="/filial/">Филиалы</a></li>
         </ul>
     </div>
     <div class="push"></div>

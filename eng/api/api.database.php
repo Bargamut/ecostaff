@@ -51,9 +51,11 @@ class Database {
         $q = preg_replace_callback(
             '/(%?)(%[sd])(:\w+)?(%?)/i',
             function($m) {
-                $r = ($m[2] == '%s' || ($m[2] == '%d' && $m[3] == ':like')) ?
-                    "'" . $m[1].$m[1].$m[2].$m[4].$m[4] . "'"
-                    :   $m[1].$m[1].$m[2].$m[4].$m[4];
+                switch ($m[2]) {
+                    case '%s': $r = ($m[3] == ':in') ? $m[1].$m[1].$m[2].$m[4].$m[4] : "'" . $m[1].$m[1].$m[2].$m[4].$m[4] . "'"; break;
+                    case '%d': $r = ($m[3] == ':like') ? "'" . $m[1].$m[1].$m[2].$m[4].$m[4] . "'" : $m[1].$m[1].$m[2].$m[4].$m[4]; break;
+                    default: break;
+                }
 
                 return $r;
             },

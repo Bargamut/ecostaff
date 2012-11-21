@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Ноя 01 2012 г., 03:11
+-- Время создания: Ноя 21 2012 г., 07:43
 -- Версия сервера: 5.5.27-log
 -- Версия PHP: 5.3.16
 
@@ -35,14 +35,45 @@ CREATE TABLE IF NOT EXISTS `clients` (
   `skype` char(15) NOT NULL COMMENT 'Skype клиента',
   `note` varchar(250) NOT NULL COMMENT 'Примечание',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='Таблица клиентов' AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='Таблица клиентов' AUTO_INCREMENT=8 ;
 
 --
 -- Дамп данных таблицы `clients`
 --
 
 INSERT INTO `clients` (`id`, `fio`, `phone`, `email`, `skype`, `note`) VALUES
-(1, 'Петров Павел Алексеевич', '89219710656', 'bargamut@mail.ru', 'bargamut17', 'Примечание такое');
+(1, 'Петров Павел Алексеевич', '89219710656', 'bargamut@mail.ru', 'bargamut17', 'Примечание такое'),
+(2, 'Иванов Иван Иванович', '2', 'ivanov@mail.ru', '', ''),
+(3, 'Сергеев Александр Игнатьевич', '3', 'sai@gmail.com', '', ''),
+(4, 'Таратинский Алексей Георгиевич', '4', 'tag@mail.ru', '', ''),
+(5, 'Александрова Екатерина Константиновна', '5', 'aekon@mail.ru', '', ''),
+(6, 'Ириновская Владислава Андреевна', '6', 'iran@pochta.ru', '', ''),
+(7, 'Штольц Кира Енасуиловна', '7', 'kirena@mail.ru', '', '');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `clients_groups`
+--
+
+DROP TABLE IF EXISTS `clients_groups`;
+CREATE TABLE IF NOT EXISTS `clients_groups` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID группы клиентов',
+  `name` char(255) NOT NULL COMMENT 'Название группы клиентов',
+  `phone` char(18) NOT NULL COMMENT 'Телефон группы',
+  `email` char(50) NOT NULL COMMENT 'E-Mail группы',
+  `skype` char(15) NOT NULL COMMENT 'Skype группы',
+  `clients` char(255) NOT NULL COMMENT 'ID клиентов в группе',
+  `note` varchar(250) NOT NULL COMMENT 'Примечание',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Таблица клиентов' AUTO_INCREMENT=3 ;
+
+--
+-- Дамп данных таблицы `clients_groups`
+--
+
+INSERT INTO `clients_groups` (`id`, `name`, `phone`, `email`, `skype`, `clients`, `note`) VALUES
+(1, 'Тестовая группа', '1234567', 'testgroup@mail.ru', 'groupskype', '1,2,5', 'Тестовая группа');
 
 -- --------------------------------------------------------
 
@@ -118,6 +149,7 @@ CREATE TABLE IF NOT EXISTS `metodists_hours` (
 DROP TABLE IF EXISTS `projects`;
 CREATE TABLE IF NOT EXISTS `projects` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID проекта',
+  `groupid` int(11) NOT NULL COMMENT 'ID группы клиентов',
   `clientid` int(11) NOT NULL COMMENT 'ID клиента',
   `fid` int(11) NOT NULL COMMENT 'ID филиала проекта',
   `number` int(4) unsigned zerofill NOT NULL DEFAULT '0000' COMMENT 'Номер проекта',
@@ -141,8 +173,8 @@ CREATE TABLE IF NOT EXISTS `projects` (
 -- Дамп данных таблицы `projects`
 --
 
-INSERT INTO `projects` (`id`, `clientid`, `fid`, `number`, `hours`, `hours2`, `form`, `programm`, `payvariant`, `tid`, `wagerate`, `cost`, `payed`, `mid`, `date`, `status`, `return`) VALUES
-(1, 1, 2, 0101, 70, 15, 1, 'Программа зашибись', 2, 1, 250, 70000, 18000, 2, '2012-10-01', 1, 0);
+INSERT INTO `projects` (`id`, `groupid`, `clientid`, `fid`, `number`, `hours`, `hours2`, `form`, `programm`, `payvariant`, `tid`, `wagerate`, `cost`, `payed`, `mid`, `date`, `status`, `return`) VALUES
+(1, 1, 0, 2, 0101, 123, 0, 1, '', 2, 2, 200, 100000, 0, 2, '2012-11-21', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -182,14 +214,7 @@ CREATE TABLE IF NOT EXISTS `projects_pays` (
   `payvariant` int(11) NOT NULL DEFAULT '0' COMMENT 'Способ оплаты',
   `date` date NOT NULL DEFAULT '0000-00-00' COMMENT 'Дата платежа',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='Таблица платежей по проектам' AUTO_INCREMENT=2 ;
-
---
--- Дамп данных таблицы `projects_pays`
---
-
-INSERT INTO `projects_pays` (`id`, `mid`, `pid`, `pay`, `payvariant`, `date`) VALUES
-(1, 2, 1, 18000, 0, '2012-10-31');
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Таблица платежей по проектам' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -340,14 +365,7 @@ CREATE TABLE IF NOT EXISTS `teachers_hours` (
   `wagerate` int(11) NOT NULL DEFAULT '0' COMMENT 'Ставка за ак.час',
   `date` date NOT NULL DEFAULT '0000-00-00' COMMENT 'Дата записи',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='Таблица записей отчитанных часов по проектам.' AUTO_INCREMENT=2 ;
-
---
--- Дамп данных таблицы `teachers_hours`
---
-
-INSERT INTO `teachers_hours` (`id`, `tid`, `pid`, `hours`, `wagerate`, `date`) VALUES
-(1, 1, 1, 15, 250, '2012-10-31');
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Таблица записей отчитанных часов по проектам.' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -434,7 +452,7 @@ CREATE TABLE IF NOT EXISTS `users_site` (
 
 INSERT INTO `users_site` (`id`, `email`, `login`, `password`, `salt`, `date_reg`, `date_lastvisit`, `uid`, `level`, `fid`, `block`, `block_reason`) VALUES
 (1, 'metodist@test.ru', 'metodist', 'feac05e12c7279d7afcc406012ad146ab251a75505f1fe6f366aaec906ceb3f8c3b0e185b82cddc6d1f3fa0c47ed6b94fdbd9481698d3c54681f0c5175c30916', 'N5zn2N42:a25:nh222:4TfiBFy7kDTy2Kz8yQ52tb7d7s8RdA8TaHfR4kQ_AN52s8Q7d:iYe3FY76eTayk2Kit2bQdYdY2;f5hBe2Y._Fa._RS3:35sfr2Da2.;rbeKhdHa4azYSY6r6e8fD43frYySZ8b349n5;GTQkfSdnHT.Fi:nE;;bRTzbfd5:5Hhn:YG;7DYfTQDZKfAyzsDeYhY4ENT4y8AtF;73B2;GnFBn8BBD42itYast3y3', '2012-10-23 03:08:14', '2012-10-23 03:08:14', 'a61626761f751f6cf058356b574f7dac2fb32316062e8fd712ccf75c3cb14e1e732b681d2e7f52036bef111efb55ab8a3f5224031a872a82c9ce891b89fac2d0', 'M', 1, 0, ''),
-(2, 'manager@test.ru', 'manager', 'ed26e15426dad1dba8998bad17694052ed7ffec0512183fe990f06971b4780af22a6c317c7c7295cc706c4789b08aa7716b61318ebfb06bee591fce5214bcf13', '2;i99YsNah6HkyRTTeYT5kG4aQSnte;E9ntGY4QNFfRhRk9.e442;bz36sfRGrdbbQAi8_sFir6RDQSr6kYiak8GS6FB9KYariT9;tf:YnREEN7AGAtskY3:8h:f9th5;NNyn4brsk757sd9b733iQnFYh:HHbS:Rbf:hSr5er:BH8ssf9E5QbQBA2byrz35;.RZS8Q;_72Yk:Fdd34KrA5yBfDeGSG9NNAa4zkkdBESb38_dt65yh:8a_', '2012-10-23 03:09:11', '2012-10-31 05:33:15', '0b0c208232c37a9df37b87c8568b349967b94f8f015dbee387f4162d5612b930b014d84fa8beb7ce6e3b636ee683430c9de438ff8438c83371bc9abcdb59b58f', 'MP', 1, 0, ''),
+(2, 'manager@test.ru', 'manager', 'ed26e15426dad1dba8998bad17694052ed7ffec0512183fe990f06971b4780af22a6c317c7c7295cc706c4789b08aa7716b61318ebfb06bee591fce5214bcf13', '2;i99YsNah6HkyRTTeYT5kG4aQSnte;E9ntGY4QNFfRhRk9.e442;bz36sfRGrdbbQAi8_sFir6RDQSr6kYiak8GS6FB9KYariT9;tf:YnREEN7AGAtskY3:8h:f9th5;NNyn4brsk757sd9b733iQnFYh:HHbS:Rbf:hSr5er:BH8ssf9E5QbQBA2byrz35;.RZS8Q;_72Yk:Fdd34KrA5yBfDeGSG9NNAa4zkkdBESb38_dt65yh:8a_', '2012-10-23 03:09:11', '2012-11-21 02:47:13', '0b0c208232c37a9df37b87c8568b349967b94f8f015dbee387f4162d5612b930b014d84fa8beb7ce6e3b636ee683430c9de438ff8438c83371bc9abcdb59b58f', 'MP', 1, 0, ''),
 (3, 'highmanager@test.ru', 'highmanager', '1613df41ead8ffc31e9c42325690010cfce770a50b560b6bd03a2e2b90711af5723ceeb60a886957e17b487fed33f4e260d734e9aa134fcc081182f7f39ad3a1', 'dRkKefFzEaeR9h3Aa7Yfzh;5d6:Tt;NDifr9:.879b4zHED3s52Gn76iA7DAnbZGk6ii3fsZe4Ty2K77r4dtD7ED:;A23yTfD4kKYd6_S;r9dQ_T9YR4Aa6KNf5aR_ia.YQyhTfGiTEArYzZ5dFeyFh4EHQRhtDQb3RbDffd23;YZki5HnN42bhz6nQ4:rbn7FAtiYfies7A.Zf4Q_d8hQ46EiQ9r3Gi79_Rfsh5f3SH99ZtDf;2RSa_GY', '2012-10-23 03:10:49', '2012-10-23 03:10:49', '0bdbd2440da6ebb4f5124eeaf43eaf8349aa0ac94d44cd23656c66d95d8898cc1a9184099984e41ec34c6a19b1b45778ecc81d719ecda4c343cf2ad443caa1cc', 'MF', 1, 0, ''),
 (4, 'filialdirector@test.ru', 'filialdirector', '6998f8b56779e5460671db31a8e713d5fa527fe43ef21feae1b3acd6228c3dc92041a120a55f3dc1a0a8a8f6e846a295b05ab9eadc6e9ec4f6eac3b961a743a8', '3:r4Y_aQYZDseKTf7FK7t2:tKT2tsa2..66b4dh2dBfhNRy4hRT3N5bKKa:;4AK3;yiEYsrYFr7aekdeD2K6ZDbKNfRQ5kNT8K_AH2:;BrDT9e:DrSGBBQk:kfEnBBhiEhdT:5._a4D2dA4Z35_K_fnYSa9yB4SZ7REtR8d:4H2tZQ8idiYfR5;EyT6hetnksT4SZKtRRZ3deTnbBk3BY4Sk:_Tshk7fRy4DDfdyf.A9hk39NHNbaQbtb;', '2012-10-23 03:12:03', '2012-10-23 03:12:03', '25a9919a6b480eee73f8ef8c11e81105e5e45e5a6a912b333adb3e635006cdf6a4032a882fdacb4bf13858d911399b2bc9319f5a4244721de42e59556064786e', 'AF', 2, 0, ''),
 (5, 'initdiretor@test.ru', 'initdiretor', '53d43510297d6a90e7afd6c6adfa38acd604e17480365acc695121681e772c78234271da21c0a40351aefb3eb8b1950fcbe869ee29a730759e2d38da38d1e638', 'ZG2;Yi:tZEsa:i5h_6_Y4h9:G3iKTFza;biB7bdn.E:fGrZiF9AtT7nadRF;yf9DS_YFBQ7KdzG72B;AfsDT_533Q:dkG4B;K5Rt7K.Y.bE.iQAbF2e2fZe99h6GHNQ32iQhShZ;Rt_KTz9z.H9zsZQSnT__FHkbSSDQeyzeG4Rdz2nZrRDFNBBK5nRQGKaQ935rNQHAtykb.HzY;8brH:Qa;E9b6HBF92ztNN2EY.ThasEYdE;d.Z.h8G', '2012-10-23 03:13:14', '2012-10-23 03:13:14', 'fa62f98ed9c4ec51578fdaa6518939e85511ed19e09a6154edc159ec9911aad639d5b24c78b0c3a5a419d09b3c08e56556c1d94c19d18d62bf7b0379615be1e3', 'AI', 1, 0, ''),
