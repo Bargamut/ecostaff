@@ -1,15 +1,26 @@
 <?php
 class Database {
+    private $db_server;
+    private $db_database;
+    private $db_username;
+    private $db_password;
+
     function db_connect($server, $username, $password) {
-        $db_index = mysql_connect($server, $username, $password) or die('Ошибка подключения к базе данных!');
+        $this->db_server   = $server;
+        $this->db_username = $username;
+        $this->db_password = $password;
+
+        $db_index = mysql_connect($this->db_server, $this->db_username, $this->db_password) or die('Ошибка подключения к базе данных!');
         return $db_index;
     }
     function db_close($db_index) {
         mysql_close($db_index);
     }
     function db_select_db($database, $db_index) {
-        mysql_select_db($database, $db_index) or die('Не удалось найти нужную базу данных!');
+        $this->db_database = $database;
+        mysql_select_db($this->db_database, $db_index) or die('Не удалось найти нужную базу данных!');
     }
+
     function db_query() {
         $args = func_get_args();
         if (func_num_args() >= 1) {
@@ -17,7 +28,6 @@ class Database {
             if (count($args) == 1) {
                 $p = array_shift($args); // Подставляемые параметры
             }
-
 
             // Если есть подставляемые параметры
             if (isset($p)){
@@ -42,6 +52,7 @@ class Database {
         }
         return $r;
     }
+
     /**
      * Фкнкция квотирования
      * @param $q - запрос
@@ -62,6 +73,7 @@ class Database {
             $q);
         return $q;
     }
+
     /**
      * Функция форматирования строчных ресурсов
      * @param $str - строка
@@ -90,6 +102,29 @@ class Database {
             }
         }
         return $result;
+    }
+
+    /**
+     * Бекап БД
+     */
+    function makeDump() {
+        $backupFile = $this->db_database . '.' . date("Y-m-d-H-i-s") . '.gz';
+
+        $command = "mysqldump --opt -h $this->db_server -u $this->db_username -p$this->db_password $this->db_database --add-drop-table --default-character-set=utf8 | gzip > $backupFile";
+        system($command);
+    }
+
+    /**
+     * Восстанавливаем БД из бекапа
+     */
+    function takeDump($date) {
+        $filename = $this->db_database.$date.'gz';
+
+        system("gunzip $filename -c > backupnow.sql");
+        system("mysql -h $this->db_server -u $this->db_username -p$this->db_password $this->db_database < backupnow.sql");
+        system("rm backupnow.sql");
+
+        return true;
     }
 }
 ?>
