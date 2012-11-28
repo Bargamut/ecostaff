@@ -37,6 +37,33 @@ ul li.submit .submEdit:hover { border: 1px #FFC869 solid; background-color: #F0C
     background-color: #C6EEA7;
 }
 
+.clients li .drag, .clients li .delete {
+    height: 20px;
+    vertical-align: middle;
+    float: right;
+}
+.clients li .delete { margin: 0px 5px 0px 10px; }
+.clients li .drag { margin: 0px 10px 0px 5px; cursor: move; }
+
+.ingroup {
+    background-color: #fff;
+    padding: 5px;
+}
+.ingroup li {
+    border: 1px #eee solid;
+    background-color: #fff;
+    border-left-width: 5px;
+    border-top-width: 0px;
+    border-right-width: 0px;
+}
+
+.ingroup li .delete {
+    height: 20px;
+    margin: 0px 5px 0px 10px;
+    vertical-align: middle;
+    float: right;
+}
+
 .hidden { display: none !important; }
 
 .place2drop {

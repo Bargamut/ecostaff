@@ -57,14 +57,29 @@ include('../top.php');?>
 
             $c = '<li class="new" rel="new">Создать клиента</li>';
             foreach ($clients as $k => $v) {
-                $c .= '<li rel="' . $v['id'] . '">' . $v['fio'] . '</li>';
+                $c .= '<li rel="' . $v['id'] . '">' .
+                          $v['fio'] .
+                          '<img class="drag" src="/img/default/drag.png" />' .
+                          '<img class="delete" src="/img/default/delete.png" />' .
+                      '</li>';
             }
 
             $c_groups = '<li class="new" rel="new">Создать группу</li>';
             foreach ($clients_groups as $k => $v) {
-                $c_groups .= '<li rel="' . $v['id'] . '|' . $v['clients'] . '">'.
+                $c_clients = '';
+                if (!empty($v['clients'])) {
+                    $arrClients = explode(',', $v['clients']);
+                    foreach ($arrClients as $kc => $vc) {
+                        $c_clients .= '<li rel="' . $vc['id'] . '">' .
+                            $clients[$vc['id']-1]['fio'] . '<img class="delete" src="/img/default/close.png" />' .
+                            '</li>';
+                    }
+                }
+                $c_groups .= '<li rel="' . $v['id'] . '">'.
                                  $v['name'].
-                                 '<ul class="ingroup"></ul>'.
+                                 '<ul class="ingroup">'.
+                                     $c_clients.
+                                 '</ul>'.
                              '</li>';
             }
 

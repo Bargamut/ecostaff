@@ -42,17 +42,16 @@ function clientsClick(obj) {
     if (!obj.hasClass('new')) { getClient(obj); }
 }
 function groupsClick(obj) {
-    var p = obj.attr('rel').split('|');
-
-    editPrepareGroup(p[0]);
-    if (!obj.hasClass('new')) { getGroup(obj, p[1]); }
+    editPrepareGroup(obj.attr('rel'));
+    if (!obj.hasClass('new')) { getGroup(obj); }
 }
 
 /**
  * Переключение списка клиентов в группе
  * @param obj - <li> группы
  */
-function getGroup(obj, clients) {
+function getGroup(obj) {
+    var clients = obj.find('.ingroup > li');
 
     obj.toggleClass('selected')
         .siblings().removeClass('selected');
@@ -60,10 +59,9 @@ function getGroup(obj, clients) {
     $('.clients > li').removeClass('inGroup selected');
     $('.groups > li').removeClass('hasClient');
 
-    if ($('.groups > li.selected').length != 0 && clients.length != 0) {
-        clients = clients.split(',');
+    if (clients.length != 0) {
         for (var i in clients) {
-            $('.clients > li:not(".new")').eq(clients[i] - 1).toggleClass('inGroup');
+            $('.clients > li:not(".new")').eq(clients.eq(i).attr('rel') - 1).toggleClass('inGroup');
         }
     }
 }
@@ -81,9 +79,12 @@ function getClient(obj) {
 
     if ($('.clients > li.selected').length != 0) {
         $('.groups > li:not(".new")').each(function() {
-            if ($(this).attr('rel').match(',?' + obj.attr('rel') + ',?')) {
-                $(this).toggleClass('hasClient');
-            }
+            var o = $(this);
+            o.find('.ingroup > li').each(function() {
+                if ($(this).attr('rel') == obj.attr('rel')) {
+                    o.toggleClass('hasClient');
+                }
+            });
         });
     }
 }
